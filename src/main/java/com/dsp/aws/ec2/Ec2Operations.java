@@ -1,4 +1,4 @@
-package com.example.aws.ec2;
+package com.dsp.aws.ec2;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

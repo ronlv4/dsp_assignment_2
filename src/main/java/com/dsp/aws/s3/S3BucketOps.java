@@ -1,4 +1,4 @@
-package com.example.aws.s3;
+package com.dsp.aws.s3;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

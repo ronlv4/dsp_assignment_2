@@ -1,4 +1,4 @@
-package com.example.aws.sqs;
+package com.dsp.aws.sqs;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
