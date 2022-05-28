@@ -3,13 +3,7 @@ package com.dsp.aws.emr;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.emr.EmrClient;
-import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig;
-import software.amazon.awssdk.services.emr.model.Application;
-import software.amazon.awssdk.services.emr.model.StepConfig;
-import software.amazon.awssdk.services.emr.model.JobFlowInstancesConfig;
-import software.amazon.awssdk.services.emr.model.RunJobFlowRequest;
-import software.amazon.awssdk.services.emr.model.RunJobFlowResponse;
-import software.amazon.awssdk.services.emr.model.EmrException;
+import software.amazon.awssdk.services.emr.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,18 +37,17 @@ public class CreateCluster {
                 .credentialsProvider(ProfileCredentialsProvider.create())
                 .build();
 
-        String jobFlowId = createAppCluster(emrClient, jar, myClass, keys, logUri, name);
+        String jobFlowId = createAppClusterWithStep(emrClient, jar, myClass, keys, logUri, name);
         System.out.println("The job flow id is " + jobFlowId);
         emrClient.close();
     }
 
-    // snippet-start:[emr.java2._create_cluster.main]
-    public static String createAppCluster(EmrClient emrClient,
-                                          String jar,
-                                          String myClass,
-                                          String keys,
-                                          String logUri,
-                                          String name) {
+    public static String createAppClusterWithStep(EmrClient emrClient,
+                                                  String jar,
+                                                  String myClass,
+                                                  String keys,
+                                                  String logUri,
+                                                  String name) {
 
         try {
             HadoopJarStepConfig jarStepConfig = HadoopJarStepConfig.builder()
@@ -79,26 +72,26 @@ public class CreateCluster {
             apps.add(hive);
             apps.add(zeppelin);
 
-            StepConfig enabledebugging = StepConfig.builder()
-                    .name("Enable debugging")
-                    .actionOnFailure("TERMINATE_JOB_FLOW")
+            StepConfig wordCountStep = StepConfig.builder()
+                    .name("myWordCountApp")
+                    .actionOnFailure(ActionOnFailure.CANCEL_AND_WAIT)
                     .hadoopJarStep(jarStepConfig)
                     .build();
 
             JobFlowInstancesConfig instancesConfig = JobFlowInstancesConfig.builder()
-                    .ec2SubnetId("subnet-206a9c58")
+//                    .ec2SubnetId("subnet-206a9c58")
                     .ec2KeyName(keys)
-                    .instanceCount(3)
+                    .instanceCount(2)
                     .keepJobFlowAliveWhenNoSteps(true)
-                    .masterInstanceType("m4.large")
-                    .slaveInstanceType("m4.large")
+                    .masterInstanceType("m3.xlarge")
+                    .slaveInstanceType("m3.xlarge")
                     .build();
 
 
             RunJobFlowRequest jobFlowRequest = RunJobFlowRequest.builder()
                     .name(name)
                     .releaseLabel("emr-5.20.0")
-                    .steps(enabledebugging)
+                    .steps(wordCountStep)
                     .applications(apps)
                     .logUri(logUri)
                     .serviceRole("EMR_DefaultRole")

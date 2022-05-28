@@ -3,10 +3,7 @@ package com.dsp.aws.emr;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.emr.EmrClient;
-import software.amazon.awssdk.services.emr.model.AddJobFlowStepsRequest;
-import software.amazon.awssdk.services.emr.model.EmrException;
-import software.amazon.awssdk.services.emr.model.HadoopJarStepConfig;
-import software.amazon.awssdk.services.emr.model.StepConfig;
+import software.amazon.awssdk.services.emr.model.*;
 
 public class AddSteps {
     public static void main(String[] args) {
@@ -33,21 +30,23 @@ public class AddSteps {
                 .credentialsProvider(ProfileCredentialsProvider.create())
                 .build();
 
-        addNewStep(emrClient, jobFlowId, jar, myClass);
+        addNewStep(emrClient, jobFlowId, jar, myClass, new String[]{}, "running bash script");
         emrClient.close();
     }
 
-    public static void addNewStep(EmrClient emrClient, String jobFlowId, String jar, String myClass) {
+    public static void addNewStep(EmrClient emrClient, String jobFlowId, String jar, String myClass, String[] args, String stepName) {
 
         try {
             HadoopJarStepConfig jarStepConfig = HadoopJarStepConfig.builder()
                     .jar(jar)
                     .mainClass(myClass)
+                    .args(args)
                     .build();
 
             StepConfig stepConfig = StepConfig.builder()
                     .hadoopJarStep(jarStepConfig)
-                    .name("Run a bash script")
+                    .actionOnFailure(ActionOnFailure.CANCEL_AND_WAIT)
+                    .name(stepName)
                     .build();
 
             AddJobFlowStepsRequest jobFlowStepsRequest = AddJobFlowStepsRequest.builder()
