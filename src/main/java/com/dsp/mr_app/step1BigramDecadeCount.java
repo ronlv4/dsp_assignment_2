@@ -37,12 +37,11 @@ public class step1BigramDecadeCount {
     }
 
     public static class IntSumReducer
-            extends Reducer<BigramDecade, IntWritable, Text, IntWritable> {
+            extends Reducer<BigramDecade, IntWritable, BigramDecade, IntWritable> {
         private final IntWritable result = new IntWritable();
 
-        public void reduce(Text key, Iterable<IntWritable> values,
-                           Context context
-        ) throws IOException, InterruptedException {
+        public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context)
+                throws IOException, InterruptedException {
             int sum = 0;
             for (IntWritable val : values) {
                 sum += val.get();
@@ -60,7 +59,7 @@ public class step1BigramDecadeCount {
         job.setMapperClass(BigramMapper.class);
         job.setCombinerClass(IntSumReducer.class);
         job.setReducerClass(IntSumReducer.class);
-        job.setOutputKeyClass(Text.class);
+        job.setOutputKeyClass(BigramDecade.class);
         job.setOutputValueClass(IntWritable.class);
         FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
         FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));

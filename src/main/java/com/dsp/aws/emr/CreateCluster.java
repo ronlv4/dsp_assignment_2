@@ -37,7 +37,7 @@ public class CreateCluster {
                 .credentialsProvider(ProfileCredentialsProvider.create())
                 .build();
 
-        String jobFlowId = createAppClusterWithStep(emrClient, jar, myClass, keys, logUri, name);
+        String jobFlowId = createAppClusterWithStep(emrClient, jar, myClass, keys, logUri, name, 1);
         System.out.println("The job flow id is " + jobFlowId);
         emrClient.close();
     }
@@ -47,7 +47,9 @@ public class CreateCluster {
                                                   String myClass,
                                                   String keys,
                                                   String logUri,
-                                                  String name) {
+                                                  String name,
+                                                  int instanceCount
+    ) {
 
         try {
             HadoopJarStepConfig jarStepConfig = HadoopJarStepConfig.builder()
@@ -81,7 +83,7 @@ public class CreateCluster {
             JobFlowInstancesConfig instancesConfig = JobFlowInstancesConfig.builder()
 //                    .ec2SubnetId("subnet-206a9c58")
                     .ec2KeyName(keys)
-                    .instanceCount(2)
+                    .instanceCount(instanceCount)
                     .keepJobFlowAliveWhenNoSteps(true)
                     .masterInstanceType("m3.xlarge")
                     .slaveInstanceType("m3.xlarge")

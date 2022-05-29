@@ -10,20 +10,21 @@ import software.amazon.awssdk.services.emr.model.*;
 public class App {
     public static void main(String[] args) {
         EmrClient emr = EmrClient.builder().build();
-        AddSteps.addNewStep(emr, "j-1SCPQTQPDY1U9",
-                "s3://dsp-assignment-2/myWordCount.jar",
-                "com.dsp.mr_app.step1WordCount",
-                new String[]{},
-                "wc3"
-        );
-
-//        CreateCluster.createAppClusterWithStep(emr,
+//        AddSteps.addNewStep(emr, "j-23R7S7U3EZL9X",
 //                "s3://dsp-assignment-2/myWordCount.jar",
-//                "com.dsp.mr_app.myWordCount",
-//                "linux_laptop",
-//                "s3://dsp-assignment-2/logs",
-//                "myWordCount"
+//                "com.dsp.mr_app.step1BigramDecadeCount",
+//                new String[]{},
+//                "wc3"
 //        );
+
+        CreateCluster.createAppClusterWithStep(emr,
+                "s3://dsp-assignment-2/myWordCount.jar",
+                "com.dsp.mr_app.step1BigramDecadeCount",
+                "linux_laptop",
+                "s3://dsp-assignment-2/logs",
+                "myWordCount",
+                1
+        );
         System.exit(0);
         HadoopJarStepConfig hadoopJarStepConfig = HadoopJarStepConfig.builder()
                 .jar("s3://dsp-assignment-2/myWordCount.jar")
@@ -38,11 +39,11 @@ public class App {
                 .hadoopJarStep(hadoopJarStepConfig)
                 .build();
 
-        String jobFlowId = CreateCluster.createAppClusterWithStep(emr, "s3://dsp-assignment-2/myWordCount.jar",
-                "com.dsp.mr_app.myWordCount",
-                "linux-laptop",
-                "s3://dsp-assignment-2/logs",
-                "myWordCount");
+//        String jobFlowId = CreateCluster.createAppClusterWithStep(emr, "s3://dsp-assignment-2/myWordCount.jar",
+//                "com.dsp.mr_app.myWordCount",
+//                "linux-laptop",
+//                "s3://dsp-assignment-2/logs",
+//                "myWordCount");
 
     }
 }

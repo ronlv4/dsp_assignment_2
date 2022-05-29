@@ -10,11 +10,12 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class BigramDecade implements WritableComparable<Pair<Text, IntWritable>> {
+public class BigramDecade extends Pair<Text, IntWritable> implements WritableComparable<Pair<Text, IntWritable>>{
 
     private Pair<Text, IntWritable> bigramDecadePair;
 
     public BigramDecade(Text bigram, IntWritable year) {
+        super(bigram, year);
         bigramDecadePair = new Pair<>(bigram, year);
     }
 

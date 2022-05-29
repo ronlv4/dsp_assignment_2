@@ -1,12 +1,20 @@
 package com.dsp.mr_app;
 
+import com.dsp.models.BigramDecade;
+import com.dsp.models.BigramDecadeOccurrences;
 import com.dsp.models.CollocationCount;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 public class step2SortBigramsDecadeByOccurrence {
@@ -17,28 +25,43 @@ public class step2SortBigramsDecadeByOccurrence {
         private Text w1 = new Text();
         private Text w2 = new Text();
 
-        public void map(Text collocation, Text value, Context context) throws IOException, InterruptedException {
+        public void map(BigramDecade bigramDecade, IntWritable occurrences, Context context) throws IOException, InterruptedException {
 
-            StringTokenizer itr = new StringTokenizer(value.toString());
-            while (itr.hasMoreTokens()) {
-                w1.set(itr.nextToken());
+//            while (itr.hasMoreTokens()) {
+//                w1.set(itr.nextToken());
 //                CollocationCount pair = new CollocationCount(w1, )
 //                context.write(pair, one);
+//            }
+        }
+    }
+
+    public static class IntSumReducer extends Reducer<CollocationCount, IntWritable, Text, BigramDecadeOccurrences> {
+        private IntWritable result = new IntWritable();
+
+        public void reduce(Text key, Iterable<BigramDecadeOccurrences> values, Context context) throws IOException, InterruptedException {
+            int currentDecade;
+            int takes = 0;
+            Iterator<BigramDecadeOccurrences> iter = values.iterator();
+            while (iter.hasNext() && takes++ <= 100) {
+                context.write(key, iter.next());
             }
         }
 
-        public static class IntSumReducer extends Reducer<CollocationCount, IntWritable, Text, IntWritable> {
-            private IntWritable result = new IntWritable();
+    }
 
-            public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-                int sum = 0;
-                for (IntWritable val : values) {
-                    sum += val.get();
-                }
-                result.set(sum);
-                context.write(key, result);
-            }
-        }
-
+    public static void main(String[] args) throws Exception {
+        System.out.println("Starting " + step1BigramDecadeCount.class.getName() + " map reduce app");
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "word count");
+        job.setJarByClass(step1BigramDecadeCount.class);
+        job.setMapperClass(step1BigramDecadeCount.BigramMapper.class);
+        job.setCombinerClass(step1BigramDecadeCount.IntSumReducer.class);
+        job.setReducerClass(step1BigramDecadeCount.IntSumReducer.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+        FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
+        FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        System.out.println("Finished job Successfully\n");
     }
 }
