@@ -30,7 +30,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>com.dsp.mr_app.step1WordCount</mainClass>
+              <mainClass>com.dsp.mr_app.step1BigramDecadeCount</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -109,6 +109,12 @@
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-mapreduce-client-core</artifactId>
       <version>3.3.3</version>
+    </dependency>
+    <dependency>
+      <groupId>org.javatuples</groupId>
+      <artifactId>javatuples</artifactId>
+      <version>1.2</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 </project>
