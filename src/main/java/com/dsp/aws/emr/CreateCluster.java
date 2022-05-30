@@ -42,6 +42,58 @@ public class CreateCluster {
         emrClient.close();
     }
 
+    public static String createCluster(EmrClient emr,
+                                       String keys,
+                                       String logUri,
+                                       int instanceCount) {
+        try {
+            Application spark = Application.builder()
+                    .name("Spark")
+                    .build();
+
+            Application hive = Application.builder()
+                    .name("Hive")
+                    .build();
+
+            Application zeppelin = Application.builder()
+                    .name("Zeppelin")
+                    .build();
+
+            List<Application> apps = new ArrayList<Application>();
+            apps.add(spark);
+            apps.add(hive);
+            apps.add(zeppelin);
+
+            JobFlowInstancesConfig instancesConfig = JobFlowInstancesConfig.builder()
+//                    .ec2SubnetId("subnet-206a9c58")
+                    .ec2KeyName(keys)
+                    .instanceCount(instanceCount)
+                    .keepJobFlowAliveWhenNoSteps(true)
+                    .masterInstanceType("m3.xlarge")
+                    .slaveInstanceType("m3.xlarge")
+                    .build();
+
+
+            RunJobFlowRequest jobFlowRequest = RunJobFlowRequest.builder()
+                    .name("My Job Flow")
+                    .releaseLabel("emr-5.20.0")
+                    .applications(apps)
+                    .logUri(logUri)
+                    .serviceRole("EMR_DefaultRole")
+                    .jobFlowRole("EMR_EC2_DefaultRole")
+                    .instances(instancesConfig)
+                    .build();
+
+            RunJobFlowResponse response = emr.runJobFlow(jobFlowRequest);
+            return response.jobFlowId();
+        } catch (EmrException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+
+        return "";
+    }
+
     public static String createAppClusterWithStep(EmrClient emrClient,
                                                   String jar,
                                                   String myClass,

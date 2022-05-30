@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import com.dsp.models.BigramDecade;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -16,28 +18,51 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class step1BigramDecadeCount {
-    public static class BigramMapper
-            extends Mapper<Object, Text, BigramDecade, IntWritable> {
 
-        public void map(Object key, Text value, Context context
-        ) throws IOException, InterruptedException {
+    public static final Log log = LogFactory.getLog(BigramMapper.class);
+
+    public static class BigramMapper extends Mapper<Object, Text, BigramDecade, IntWritable> {
+
+
+        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            System.out.println("got from record reader the line " + value.toString());
+            log.info("got from record reader the line " + value);
             String[] bigramsLine = value.toString().split("\\R"); // bigram tringTAB year TAB occurrences TAB books
+            System.out.println("splitted line %s into:\n" + Arrays.toString(bigramsLine));
+            log.info("splitted line into:\n" + Arrays.toString(bigramsLine));
             Iterator<String> bigramItertor = Arrays.stream(bigramsLine).iterator();
             String bigramLine;
+            int year;
+            IntWritable count;
             while (bigramItertor.hasNext()) {
                 bigramLine = bigramItertor.next();
+                System.out.println("processing line " + bigramLine);
+                log.info("processing line " + bigramLine);
                 String[] lineElements = bigramLine.split("\\t");
+                System.out.println("splitted line into:\n" + Arrays.toString(lineElements));
+                log.info("splitted line %s into:\n" + Arrays.toString(lineElements));
                 Text bigram = new Text(lineElements[0]);
-                int year = Integer.parseInt(lineElements[1]);
-                IntWritable count = new IntWritable(Integer.parseInt((lineElements[2])));
+                System.out.println("the bigram is " + bigram);
+                log.info("the bigram is " + bigram);
+                try {
+                    year = Integer.parseInt(lineElements[1]);
+                    count = new IntWritable(Integer.parseInt((lineElements[2])));
+                    System.out.println("the year is " + year);
+                    System.out.println("the count is " + count.get());
+                    log.info("the year is " + year);
+                    log.info("the count is " + count.get());
+                } catch (NumberFormatException ignored) {
+                    continue;
+                }
                 IntWritable decade = new IntWritable(year / 10);
+                System.out.println("the decade is " + decade.get());
+                log.info("the decade is " + decade.get());
                 context.write(new BigramDecade(bigram, decade), count);
             }
         }
     }
 
-    public static class IntSumReducer
-            extends Reducer<BigramDecade, IntWritable, BigramDecade, IntWritable> {
+    public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, IntWritable> {
         private final IntWritable result = new IntWritable();
 
         public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context)

@@ -2,7 +2,6 @@ package com.dsp.models;
 
 import org.apache.commons.math3.util.Pair;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
@@ -13,6 +12,10 @@ import java.io.IOException;
 public class BigramDecade extends Pair<Text, IntWritable> implements WritableComparable<Pair<Text, IntWritable>>{
 
     private Pair<Text, IntWritable> bigramDecadePair;
+
+    public BigramDecade() {
+        super(new Text(), new IntWritable());
+    }
 
     public BigramDecade(Text bigram, IntWritable year) {
         super(bigram, year);
