@@ -25,10 +25,8 @@ public class step1BigramDecadeCount {
     public static class BigramMapper extends Mapper<Object, Text, BigramDecade, IntWritable> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            //System.out.println("got from record reader the line " + value.toString());
             logger.info("got from record reader the line " + value);
             String[] bigramsLine = value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
-            //System.out.println("splitted line %s into:\n" + Arrays.toString(bigramsLine));
             logger.info("splitted line into: " + Arrays.toString(bigramsLine));
             Iterator<String> bigramItertor = Arrays.stream(bigramsLine).iterator();
             String bigramLine;
@@ -36,26 +34,20 @@ public class step1BigramDecadeCount {
             IntWritable count;
             while (bigramItertor.hasNext()) {
                 bigramLine = bigramItertor.next();
-                //System.out.println("processing line " + bigramLine);
                 logger.info("processing line " + bigramLine);
                 String[] lineElements = bigramLine.split("\\t");
-                //System.out.println("splitted line into:\n" + Arrays.toString(lineElements));
                 logger.info("splitted line %s into: " + Arrays.toString(lineElements));
                 Text bigram = new Text(lineElements[0]);
-                //System.out.println("the bigram is " + bigram);
                 logger.info("the bigram is " + bigram);
                 try {
                     year = Integer.parseInt(lineElements[1]);
                     count = new IntWritable(Integer.parseInt((lineElements[2])));
-                    //System.out.println("the year is " + year);
-                    //System.out.println("the count is " + count.get());
                     logger.info("the year is " + year);
                     logger.info("the count is " + count.get());
                 } catch (NumberFormatException ignored) {
                     continue;
                 }
                 IntWritable decade = new IntWritable(year / 10);
-                //System.out.println("the decade is " + decade.get());
                 logger.info("the decade is " + decade.get());
                 context.write(new BigramDecade(bigram, decade), count);
             }

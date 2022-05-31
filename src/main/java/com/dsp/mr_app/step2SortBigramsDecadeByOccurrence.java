@@ -16,6 +16,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 
 public class step2SortBigramsDecadeByOccurrence {
@@ -23,15 +24,34 @@ public class step2SortBigramsDecadeByOccurrence {
     public static final Logger logger = Logger.getLogger(step2SortBigramsDecadeByOccurrence.class);
     private static IntWritable one = new IntWritable(1);
 
-    public static class BigramOccurrencesMapper extends Mapper<Object, BigramDecadeOccurrences, BigramDecadeOccurrences, IntWritable> {
+    public static class BigramOccurrencesMapper extends Mapper<Object, Text, BigramDecadeOccurrences, IntWritable> {
 
         private Text w1 = new Text();
         private Text w2 = new Text();
 
         @Override
-        public void map(Object key, BigramDecadeOccurrences bigramDecadeOccurrences, Context context) throws IOException, InterruptedException {
-            logger.info("got from record reader the line " + bigramDecadeOccurrences);
-            context.write(bigramDecadeOccurrences, one);
+        public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            logger.info("got from record reader the line " + value);
+            String[] bdosLine= value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
+            Iterator<String> bdoIterator = Arrays.stream(bdosLine).iterator();
+            String bdoLine;
+            IntWritable occurrences;
+            while (bdoIterator.hasNext()) {
+                bdoLine = bdoIterator.next();
+                logger.info("processing line " + bdoLine);
+                String[] lineElements = bdoLine.split("\\t");
+                logger.info("splitted line %s into: " + Arrays.toString(lineElements));
+                BigramDecade bigramDecade = BigramDecade.fromString(lineElements[0]);
+                logger.info("the bigram is " + bigramDecade);
+                try {
+                    occurrences = new IntWritable(Integer.parseInt((lineElements[1])));
+                    logger.info("the bd is: " + bigramDecade);
+                    logger.info("occurrences: " + occurrences.get());
+                } catch (NumberFormatException ignored) {
+                    continue;
+                }
+                context.write(new BigramDecadeOccurrences(bigramDecade, occurrences), one);
+            }
         }
     }
 

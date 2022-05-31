@@ -26,6 +26,10 @@ public class BigramDecade implements WritableComparable<BigramDecade>{
         this.decade = decade;
     }
 
+    public static BigramDecade fromString(String bigram){ // w1 w2:decade
+        return new BigramDecade(new Text(bigram.split(":")[0]), new IntWritable(Integer.parseInt(bigram.split(":")[1])));
+    }
+
     public Text getBigram() {
         return bigram;
     }
