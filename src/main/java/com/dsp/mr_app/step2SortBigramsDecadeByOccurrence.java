@@ -11,6 +11,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.ReduceContext;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.Logger;
 
@@ -22,7 +23,7 @@ public class step2SortBigramsDecadeByOccurrence {
     public static final Logger logger = Logger.getLogger(step2SortBigramsDecadeByOccurrence.class);
     private static IntWritable one = new IntWritable(1);
 
-    public static class TokenizerMapper extends Mapper<Object, BigramDecade, BigramDecadeOccurrences, IntWritable> {
+    public static class BigramOccurrencesMapper extends Mapper<Object, BigramDecade, BigramDecadeOccurrences, IntWritable> {
 
         private Text w1 = new Text();
         private Text w2 = new Text();
@@ -33,7 +34,7 @@ public class step2SortBigramsDecadeByOccurrence {
         }
     }
 
-    public static class IntSumReducer extends Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable> {
+    public static class BigramOccurrencesReducer extends Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable> {
         private IntWritable result = new IntWritable();
 
         @Override
@@ -73,22 +74,22 @@ public class step2SortBigramsDecadeByOccurrence {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("Starting " + step2SortBigramsDecadeByOccurrence.class.getName() + " map reduce app");
+        logger.info("Starting " + step2SortBigramsDecadeByOccurrence.class.getName() + " map reduce app");
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step2SortBigramsDecadeByOccurrence.class);
-        job.setMapperClass(step2SortBigramsDecadeByOccurrence.TokenizerMapper.class);
+        job.setMapperClass(BigramOccurrencesMapper.class);
         job.setMapOutputKeyClass(BigramDecadeOccurrences.class);
         job.setMapOutputValueClass(IntWritable.class);
-        job.setCombinerClass(step2SortBigramsDecadeByOccurrence.IntSumReducer.class);
-        job.setReducerClass(step2SortBigramsDecadeByOccurrence.IntSumReducer.class);
+        job.setCombinerClass(BigramOccurrencesReducer.class);
+        job.setReducerClass(BigramOccurrencesReducer.class);
         job.setOutputKeyClass(BigramDecadeOccurrences.class);
         job.setOutputValueClass(IntWritable.class);
 //        FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
-        FileInputFormat.addInputPath(job, new Path(args[0]));
+        TextInputFormat.addInputPath(job, new Path(args[0]));
 //        FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
         FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/output" + System.currentTimeMillis()));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
-        System.out.println("Finished job 2 Successfully\n");
+        logger.info("Finished job 2 Successfully\n");
     }
 }

@@ -80,12 +80,11 @@ public class step1BigramDecadeCount {
 
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
         if (args.length < 1) {
-            System.out.println("not place to store output path");
+            logger.error("not place to store output path");
             System.exit(1);
         }
-        System.out.println("Starting " + step1BigramDecadeCount.class.getName() + " map reduce app");
+        logger.info("Starting " + step1BigramDecadeCount.class.getName() + " map reduce app");
         Configuration conf = new Configuration();
-        BasicConfigurator.configure();
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step1BigramDecadeCount.class);
         job.setMapperClass(BigramMapper.class);
@@ -99,6 +98,6 @@ public class step1BigramDecadeCount {
         args[0] = "/home/hadoop/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
         job.waitForCompletion(true);
-        System.out.println("Finished job 1 Successfully\n");
+        logger.info("Finished job 1 Successfully\n");
     }
 }
