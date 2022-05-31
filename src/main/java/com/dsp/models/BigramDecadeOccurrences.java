@@ -28,10 +28,10 @@ public class BigramDecadeOccurrences implements WritableComparable<BigramDecadeO
     @Override
     public int compareTo(BigramDecadeOccurrences o) {
         /*
-        Primary sort by IntWritable year
+        Primary sort by IntWritable decade
         Secondary sort by IntWritable occurrences
          */
-        return  bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) < 0 ? -1 :
+        return  bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) < 0 ? 1 :
                 bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) > 0 ? -1 :
                 occurrences.compareTo(o.getOccurrences());
     }
@@ -46,5 +46,10 @@ public class BigramDecadeOccurrences implements WritableComparable<BigramDecadeO
     public void readFields(DataInput dataInput) throws IOException {
         bigramDecade.readFields(dataInput);
         occurrences.readFields(dataInput);
+    }
+
+    @Override
+    public String toString() {
+        return bigramDecade + ":" + occurrences;
     }
 }

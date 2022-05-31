@@ -30,7 +30,7 @@
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>com.dsp.mr_app.step1BigramDecadeCount</mainClass>
+              <mainClass>com.dsp.dsp_assignment_2.TestSteps</mainClass>
             </manifest>
           </archive>
         </configuration>
