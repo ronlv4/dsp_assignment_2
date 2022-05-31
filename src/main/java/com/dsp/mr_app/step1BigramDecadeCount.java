@@ -24,10 +24,10 @@ public class step1BigramDecadeCount {
     public static class BigramMapper extends Mapper<Object, Text, BigramDecade, IntWritable> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            System.out.println("got from record reader the line " + value.toString());
+            //System.out.println("got from record reader the line " + value.toString());
             logger.debug("got from record reader the line " + value);
             String[] bigramsLine = value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
-            System.out.println("splitted line %s into:\n" + Arrays.toString(bigramsLine));
+            //System.out.println("splitted line %s into:\n" + Arrays.toString(bigramsLine));
             logger.debug("splitted line into:\n" + Arrays.toString(bigramsLine));
             Iterator<String> bigramItertor = Arrays.stream(bigramsLine).iterator();
             String bigramLine;
@@ -35,26 +35,26 @@ public class step1BigramDecadeCount {
             IntWritable count;
             while (bigramItertor.hasNext()) {
                 bigramLine = bigramItertor.next();
-                System.out.println("processing line " + bigramLine);
+                //System.out.println("processing line " + bigramLine);
                 logger.info("processing line " + bigramLine);
                 String[] lineElements = bigramLine.split("\\t");
-                System.out.println("splitted line into:\n" + Arrays.toString(lineElements));
+                //System.out.println("splitted line into:\n" + Arrays.toString(lineElements));
                 logger.debug("splitted line %s into:\n" + Arrays.toString(lineElements));
                 Text bigram = new Text(lineElements[0]);
-                System.out.println("the bigram is " + bigram);
+                //System.out.println("the bigram is " + bigram);
                 logger.debug("the bigram is " + bigram);
                 try {
                     year = Integer.parseInt(lineElements[1]);
                     count = new IntWritable(Integer.parseInt((lineElements[2])));
-                    System.out.println("the year is " + year);
-                    System.out.println("the count is " + count.get());
+                    //System.out.println("the year is " + year);
+                    //System.out.println("the count is " + count.get());
                     logger.debug("the year is " + year);
                     logger.debug("the count is " + count.get());
                 } catch (NumberFormatException ignored) {
                     continue;
                 }
                 IntWritable decade = new IntWritable(year / 10);
-                System.out.println("the decade is " + decade.get());
+                //System.out.println("the decade is " + decade.get());
                 logger.debug("the decade is " + decade.get());
                 context.write(new BigramDecade(bigram, decade), count);
             }
@@ -86,8 +86,10 @@ public class step1BigramDecadeCount {
         job.setReducerClass(IntSumReducer.class);
         job.setOutputKeyClass(BigramDecade.class);
         job.setOutputValueClass(IntWritable.class);
-        FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
-        FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
+        //FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
+        FileInputFormat.addInputPath(job, new Path("/home/hadoop/dsp_assignment_2/input/"));
+        //FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
+        FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/dsp_assignment_2/output" + System.currentTimeMillis()));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
         System.out.println("Finished job Successfully\n");
     }
