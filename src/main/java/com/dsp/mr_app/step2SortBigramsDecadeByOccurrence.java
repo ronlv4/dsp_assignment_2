@@ -86,7 +86,7 @@ public class step2SortBigramsDecadeByOccurrence {
         FileInputFormat.addInputPath(job, new Path(args[0]));
 //        FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
         FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/output" + System.currentTimeMillis()));
-        System.out.println("Finished job 2 Successfully\n");
         System.exit(job.waitForCompletion(true) ? 0 : 1);
+        System.out.println("Finished job 2 Successfully\n");
     }
 }

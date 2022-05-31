@@ -12,6 +12,11 @@ public class BigramDecadeOccurrences implements WritableComparable<BigramDecadeO
     private BigramDecade bigramDecade;
     private IntWritable occurrences;
 
+    public BigramDecadeOccurrences() {
+        bigramDecade = new BigramDecade();
+        occurrences = new IntWritable();
+    }
+
     public BigramDecadeOccurrences(BigramDecade bigramDecade, IntWritable occurrences) {
         this.bigramDecade = bigramDecade;
         this.occurrences = occurrences;
