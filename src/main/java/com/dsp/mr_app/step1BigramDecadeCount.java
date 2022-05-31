@@ -28,7 +28,7 @@ public class step1BigramDecadeCount {
             logger.debug("got from record reader the line " + value);
             String[] bigramsLine = value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
             //System.out.println("splitted line %s into:\n" + Arrays.toString(bigramsLine));
-            logger.debug("splitted line into:\n" + Arrays.toString(bigramsLine));
+            logger.debug("splitted line into: " + Arrays.toString(bigramsLine));
             Iterator<String> bigramItertor = Arrays.stream(bigramsLine).iterator();
             String bigramLine;
             int year;
