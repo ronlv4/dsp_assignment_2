@@ -13,11 +13,11 @@ public class App {
         EmrClient emr = EmrClient.builder().build();
 
 //        CreateCluster.createCluster(emr,
-//                "linux_laptop",
+//               "linux_laptop",
 //                "s3://dsp-assignment-2/logs",
 //                1);
 //
-        AddSteps.addNewStep(emr, "j-1RC182QJAMH9H",
+        AddSteps.addNewStep(emr, "j-1FWY7Q9HOBFWB",
                 "s3://dsp-assignment-2/myWordCount.jar",
                 "com.dsp.mr_app.step1BigramDecadeCount",
                 new String[]{},

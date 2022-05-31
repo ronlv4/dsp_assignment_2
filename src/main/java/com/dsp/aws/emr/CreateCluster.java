@@ -47,23 +47,6 @@ public class CreateCluster {
                                        String logUri,
                                        int instanceCount) {
         try {
-            Application spark = Application.builder()
-                    .name("Spark")
-                    .build();
-
-            Application hive = Application.builder()
-                    .name("Hive")
-                    .build();
-
-            Application zeppelin = Application.builder()
-                    .name("Zeppelin")
-                    .build();
-
-            List<Application> apps = new ArrayList<Application>();
-            apps.add(spark);
-            apps.add(hive);
-            apps.add(zeppelin);
-
             JobFlowInstancesConfig instancesConfig = JobFlowInstancesConfig.builder()
 //                    .ec2SubnetId("subnet-206a9c58")
                     .ec2KeyName(keys)
@@ -77,7 +60,6 @@ public class CreateCluster {
             RunJobFlowRequest jobFlowRequest = RunJobFlowRequest.builder()
                     .name("My Job Flow")
                     .releaseLabel("emr-5.20.0")
-                    .applications(apps)
                     .logUri(logUri)
                     .serviceRole("EMR_DefaultRole")
                     .jobFlowRole("EMR_EC2_DefaultRole")
