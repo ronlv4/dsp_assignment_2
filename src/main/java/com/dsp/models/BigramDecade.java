@@ -9,39 +9,50 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class BigramDecade extends Pair<Text, IntWritable> implements WritableComparable<Pair<Text, IntWritable>>{
-
-    private Pair<Text, IntWritable> bigramDecadePair;
+public class BigramDecade implements WritableComparable<BigramDecade>{
+    private Text bigram;
+    private IntWritable decade;
 
     public BigramDecade() {
-        super(new Text(), new IntWritable());
+        set(new Text(), new IntWritable());
     }
 
-    public BigramDecade(Text bigram, IntWritable year) {
-        super(bigram, year);
-        bigramDecadePair = new Pair<>(bigram, year);
+    public BigramDecade(Text bigram, IntWritable decade) {
+        set(bigram, decade);
+    }
+
+    public void set(Text bigram, IntWritable decade) {
+        this.bigram = bigram;
+        this.decade = decade;
+    }
+
+    public Text getBigram() {
+        return bigram;
+    }
+
+    public IntWritable getDecade() {
+        return decade;
     }
 
     @Override
     public void write(DataOutput dataOutput) throws IOException {
-        bigramDecadePair.getFirst().write(dataOutput);
-        bigramDecadePair.getSecond().write(dataOutput);
+        bigram.write(dataOutput);
+        decade.write(dataOutput);
     }
 
     @Override
     public void readFields(DataInput dataInput) throws IOException {
-        bigramDecadePair.getFirst().readFields(dataInput);
-        bigramDecadePair.getSecond().readFields(dataInput);
+        bigram.readFields(dataInput);
+        decade.readFields(dataInput);
     }
 
-    @Override
-    public int compareTo(Pair<Text, IntWritable> o) {
+    public int compareTo(BigramDecade o) {
         /*
         Primary sort by Text bigram
         Secondary sort by IntWritable year
          */
-        return  bigramDecadePair.getFirst().compareTo(o.getFirst()) < 0 ? -1 :
-                bigramDecadePair.getFirst().compareTo(o.getFirst()) > 0 ? 1 :
-                bigramDecadePair.getSecond().compareTo(o.getSecond());
+        return  bigram.compareTo(o.getBigram()) < 0 ? -1 :
+                bigram.compareTo(o.getBigram()) > 0 ? 1 :
+                decade.compareTo(o.getDecade());
     }
 }

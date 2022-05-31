@@ -1,43 +1,50 @@
 package com.dsp.models;
 
-import org.apache.commons.math3.util.Pair;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class BigramDecadeOccurrences extends Pair<BigramDecade, IntWritable> implements WritableComparable<Pair<BigramDecade, IntWritable>> {
+public class BigramDecadeOccurrences implements WritableComparable<BigramDecadeOccurrences> {
 
-    private Pair<BigramDecade, IntWritable> bigramDecadeOccurrencesPair;
+    private BigramDecade bigramDecade;
+    private IntWritable occurrences;
 
     public BigramDecadeOccurrences(BigramDecade bigramDecade, IntWritable occurrences) {
-        super(bigramDecade, occurrences);
-        bigramDecadeOccurrencesPair = new Pair<>(bigramDecade, occurrences);
+        this.bigramDecade = bigramDecade;
+        this.occurrences = occurrences;
+    }
+
+    public BigramDecade getBigramDecade() {
+        return bigramDecade;
+    }
+
+    public IntWritable getOccurrences() {
+        return occurrences;
     }
 
     @Override
-    public void write(DataOutput dataOutput) throws IOException {
-        bigramDecadeOccurrencesPair.getFirst().write(dataOutput);
-        bigramDecadeOccurrencesPair.getSecond().write(dataOutput);
-    }
-
-    @Override
-    public void readFields(DataInput dataInput) throws IOException {
-        bigramDecadeOccurrencesPair.getFirst().readFields(dataInput);
-        bigramDecadeOccurrencesPair.getSecond().readFields(dataInput);
-    }
-
-    @Override
-    public int compareTo(Pair<BigramDecade, IntWritable> o) {
+    public int compareTo(BigramDecadeOccurrences o) {
         /*
         Primary sort by IntWritable year
         Secondary sort by IntWritable occurrences
          */
-        return  bigramDecadeOccurrencesPair.getFirst().getSecond().compareTo(o.getFirst().getSecond()) < 0 ? -1 :
-                bigramDecadeOccurrencesPair.getFirst().getSecond().compareTo(o.getFirst().getSecond()) > 0 ? 1 :
-                bigramDecadeOccurrencesPair.getSecond().compareTo(o.getSecond());
+        return  bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) < 0 ? -1 :
+                bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) > 0 ? -1 :
+                occurrences.compareTo(o.getOccurrences());
+    }
+
+    @Override
+    public void write(DataOutput dataOutput) throws IOException {
+        bigramDecade.write(dataOutput);
+        occurrences.write(dataOutput);
+    }
+
+    @Override
+    public void readFields(DataInput dataInput) throws IOException {
+        bigramDecade.readFields(dataInput);
+        occurrences.readFields(dataInput);
     }
 }
