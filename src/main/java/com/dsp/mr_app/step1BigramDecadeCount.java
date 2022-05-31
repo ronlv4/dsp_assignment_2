@@ -15,7 +15,10 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
+import org.apache.logging.log4j.core.Appender;
+import org.apache.logging.log4j.core.Layout;
 
 public class step1BigramDecadeCount {
 
@@ -39,7 +42,7 @@ public class step1BigramDecadeCount {
                 logger.info("processing line " + bigramLine);
                 String[] lineElements = bigramLine.split("\\t");
                 //System.out.println("splitted line into:\n" + Arrays.toString(lineElements));
-                logger.info("splitted line %s into:\n" + Arrays.toString(lineElements));
+                logger.info("splitted line %s into: " + Arrays.toString(lineElements));
                 Text bigram = new Text(lineElements[0]);
                 //System.out.println("the bigram is " + bigram);
                 logger.info("the bigram is " + bigram);
@@ -77,7 +80,11 @@ public class step1BigramDecadeCount {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
+        if (args.length < 1) {
+            System.out.println("not place to store output path");
+            System.exit(1);
+        }
         System.out.println("Starting " + step1BigramDecadeCount.class.getName() + " map reduce app");
         Configuration conf = new Configuration();
         BasicConfigurator.configure();
@@ -91,7 +98,8 @@ public class step1BigramDecadeCount {
         //FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
         FileInputFormat.addInputPath(job, new Path("/home/hadoop/input/"));
         //FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
-        FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/output" + System.currentTimeMillis()));
+        args[0] = "/home/hadoop/output" + System.currentTimeMillis();
+        FileOutputFormat.setOutputPath(job, new Path(args[0]));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
         System.out.println("Finished job Successfully\n");
     }
