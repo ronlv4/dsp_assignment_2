@@ -86,7 +86,7 @@ public class step2SortBigramsDecadeByOccurrence {
         job.setOutputKeyClass(BigramDecadeOccurrences.class);
         job.setOutputValueClass(IntWritable.class);
 //        FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
-        TextInputFormat.addInputPath(job, new Path(args[0]));
+        FileInputFormat.addInputPath(job, new Path(args[0]));
 //        FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
         FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/output" + System.currentTimeMillis()));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
