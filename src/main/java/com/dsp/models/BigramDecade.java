@@ -55,4 +55,8 @@ public class BigramDecade implements WritableComparable<BigramDecade>{
                 bigram.compareTo(o.getBigram()) > 0 ? 1 :
                 decade.compareTo(o.getDecade());
     }
+    @Override
+    public String toString(){
+        return bigram + ":" + decade;
+    }
 }
