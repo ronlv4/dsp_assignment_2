@@ -28,6 +28,7 @@ public class step2SortBigramsDecadeByOccurrence {
         private Text w1 = new Text();
         private Text w2 = new Text();
 
+        @Override
         public void map(Object key, BigramDecadeOccurrences bigramDecadeOccurrences, Context context) throws IOException, InterruptedException {
             logger.info("got from record reader the line " + bigramDecadeOccurrences);
             context.write(bigramDecadeOccurrences, one);
@@ -54,6 +55,7 @@ public class step2SortBigramsDecadeByOccurrence {
             }
         }
 
+        @Override
         public void reduce(BigramDecadeOccurrences key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             context.write(key, one);
 //            int takes = 0;
