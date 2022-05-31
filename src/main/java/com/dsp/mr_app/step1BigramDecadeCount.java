@@ -100,7 +100,7 @@ public class step1BigramDecadeCount {
         //FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
         args[0] = "/home/hadoop/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
-        System.out.println("Finished job Successfully\n");
+        job.waitForCompletion(true);
+        System.out.println("Finished job 1 Successfully\n");
     }
 }
