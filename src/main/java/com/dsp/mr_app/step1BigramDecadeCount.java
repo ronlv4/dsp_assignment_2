@@ -1,10 +1,7 @@
 package com.dsp.mr_app;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
-
 import com.dsp.models.BigramDecade;
+import com.dsp.models.BigramDecadeOccurrences;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -15,10 +12,11 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Logger;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.Layout;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class step1BigramDecadeCount {
 
