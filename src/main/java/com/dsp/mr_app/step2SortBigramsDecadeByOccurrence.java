@@ -36,14 +36,14 @@ public class step2SortBigramsDecadeByOccurrence {
             Iterator<String> bdoIterator = Arrays.stream(bdosLine).iterator();
             String bdoLine;
             IntWritable occurrences;
+            BigramDecade bigramDecade;
             while (bdoIterator.hasNext()) {
                 bdoLine = bdoIterator.next();
                 logger.info("processing line " + bdoLine);
                 String[] lineElements = bdoLine.split("\\t");
                 logger.info("splitted line %s into: " + Arrays.toString(lineElements));
-                BigramDecade bigramDecade = BigramDecade.fromString(lineElements[0]);
-                logger.info("the bigram is " + bigramDecade);
                 try {
+                    bigramDecade = BigramDecade.fromString(lineElements[0]);
                     occurrences = new IntWritable(Integer.parseInt((lineElements[1])));
                     logger.info("the bd is: " + bigramDecade);
                     logger.info("occurrences: " + occurrences.get());
