@@ -23,7 +23,7 @@ public class step2SortBigramsDecadeByOccurrence {
     public static final Logger logger = Logger.getLogger(step2SortBigramsDecadeByOccurrence.class);
     private static IntWritable one = new IntWritable(1);
 
-    public static class BigramOccurrencesMapper extends Mapper<Object, BigramDecade, BigramDecadeOccurrences, IntWritable> {
+    public static class BigramOccurrencesMapper extends Mapper<Object, BigramDecadeOccurrences, BigramDecadeOccurrences, IntWritable> {
 
         private Text w1 = new Text();
         private Text w2 = new Text();
