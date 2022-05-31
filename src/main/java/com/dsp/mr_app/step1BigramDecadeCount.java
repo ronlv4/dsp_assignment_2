@@ -87,9 +87,9 @@ public class step1BigramDecadeCount {
         job.setOutputKeyClass(BigramDecade.class);
         job.setOutputValueClass(IntWritable.class);
         //FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
-        FileInputFormat.addInputPath(job, new Path("/home/hadoop/dsp_assignment_2/input/"));
+        FileInputFormat.addInputPath(job, new Path("/home/hadoop/input/"));
         //FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
-        FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/dsp_assignment_2/output" + System.currentTimeMillis()));
+        FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/output" + System.currentTimeMillis()));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
         System.out.println("Finished job Successfully\n");
     }
