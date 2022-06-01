@@ -58,22 +58,22 @@ public class step2SortBigramsDecadeByOccurrence {
     public static class BigramOccurrencesReducer extends Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable> {
         private IntWritable result = new IntWritable();
 
-        @Override
-        public void run(Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable>.Context context) throws IOException, InterruptedException {
-            this.setup(context);
-            int count = 0;
-            try {
-                while(context.nextKey() && count++ <= 100) {
-                    this.reduce(context.getCurrentKey(), context.getValues(), context);
-                    Iterator<IntWritable> iter = context.getValues().iterator();
-                    if (iter instanceof ReduceContext.ValueIterator) {
-                        ((ReduceContext.ValueIterator)iter).resetBackupStore();
-                    }
-                }
-            } finally {
-                this.cleanup(context);
-            }
-        }
+//        @Override
+//        public void run(Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable>.Context context) throws IOException, InterruptedException {
+//            this.setup(context);
+//            int count = 0;
+//            try {
+//                while(context.nextKey() && count++ <= 100) {
+//                    this.reduce(context.getCurrentKey(), context.getValues(), context);
+//                    Iterator<IntWritable> iter = context.getValues().iterator();
+//                    if (iter instanceof ReduceContext.ValueIterator) {
+//                        ((ReduceContext.ValueIterator)iter).resetBackupStore();
+//                    }
+//                }
+//            } finally {
+//                this.cleanup(context);
+//            }
+//        }
 
         @Override
         public void reduce(BigramDecadeOccurrences key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {

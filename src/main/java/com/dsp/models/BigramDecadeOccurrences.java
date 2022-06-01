@@ -36,8 +36,8 @@ public class BigramDecadeOccurrences implements WritableComparable<BigramDecadeO
         Primary sort by IntWritable decade
         Secondary sort by IntWritable occurrences
          */
-        return  bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) < 0 ? 1 :
-                bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) > 0 ? -1 :
+        return  bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) < 0 ? -1 :
+                bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) > 0 ? 1 :
                 occurrences.compareTo(o.getOccurrences());
     }
 
