@@ -111,7 +111,7 @@ public class step2SortBigramsDecadeByOccurrence {
             currentDecade.set(key.getBigramDecade().getDecade().get());
             if (decadeCountMap.getOrDefault(currentDecade.get(), 0) < MAX_BIGRAMS){
                 decadeCountMap.compute(currentDecade.get(), (decade, count) -> count == null ? 1 : count + 1);
-                context.write(key, null);
+                context.write(key, one);
             }
 //            int takes = 0;
 //            IntWritable currentDecade = key.getBigramDecade().getDecade();
@@ -136,11 +136,11 @@ public class step2SortBigramsDecadeByOccurrence {
         job.setJarByClass(step2SortBigramsDecadeByOccurrence.class);
         job.setMapperClass(BigramOccurrencesMapper.class);
         job.setMapOutputKeyClass(BigramDecadeOccurrences.class);
-        job.setMapOutputValueClass(null);
+        job.setMapOutputValueClass(IntWritable.class);
 //        job.setCombinerClass(BigramOccurrencesReducer.class);
         job.setReducerClass(BigramOccurrencesReducer.class);
         job.setOutputKeyClass(BigramDecadeOccurrences.class);
-        job.setOutputValueClass(null);
+        job.setOutputValueClass(IntWritable.class);
 //        FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
         FileInputFormat.addInputPath(job, new Path(args[0]));
 //        FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
