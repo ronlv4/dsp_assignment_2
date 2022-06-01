@@ -24,7 +24,7 @@ public class step2SortBigramsDecadeByOccurrence {
     public static final Logger logger = Logger.getLogger(step2SortBigramsDecadeByOccurrence.class);
     private static IntWritable one = new IntWritable(1);
 
-    public static class BigramOccurrencesMapper extends Mapper<Object, Text, BigramDecadeOccurrences, IntWritable> {
+    public static class BigramOccurrencesMapper extends Mapper<Object, Text, IntWritable, BigramDecadeOccurrences> {
 
         private Text w1 = new Text();
         private Text w2 = new Text();
@@ -50,63 +50,65 @@ public class step2SortBigramsDecadeByOccurrence {
                 } catch (NumberFormatException ignored) {
                     continue;
                 }
-                context.write(new BigramDecadeOccurrences(bigramDecade, occurrences), one); //bigram:200:2560  1
+                context.write(bigramDecade.getDecade(), new BigramDecadeOccurrences(bigramDecade, occurrences));
+//                context.write(new BigramDecadeOccurrences(bigramDecade, occurrences), one); //bigram:200:2560  1
             }
         }
     }
 
-    public static class BigramOccurrencesReducer extends Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable> {
+    public static class BigramOccurrencesReducer extends Reducer<IntWritable, BigramDecadeOccurrences, BigramDecadeOccurrences, IntWritable> {
         private IntWritable result = new IntWritable();
         private static AtomicInteger takes = new AtomicInteger(0);
+        private static AtomicInteger currentDecade = new AtomicInteger(0);
 
-        @Override
-        public void run(Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable>.Context context) throws IOException, InterruptedException {
-            this.setup(context);
-            logger.info("inside run function");
-            logger.info("context current key: " + context.getCurrentKey());
-            int takes = 0;
-            IntWritable currentDecade;
-            BigramDecadeOccurrences prev;
-            try {
-                context.nextKey();
-                while(context.getCurrentKey() != null) {
-                    prev = context.getCurrentKey();
-                    logger.info("context current key: " + context.getCurrentKey());
-                    currentDecade = context.getCurrentKey().getBigramDecade().getDecade();
-                    logger.info("current decade: " + currentDecade);
-                    while (context.getCurrentKey().getBigramDecade().getDecade() == currentDecade && takes++ <= 100 && context.nextKeyValue()){
-                        logger.info("calling reduce with bdo " + prev);
-                        this.reduce(prev, context.getValues(), context);
-                        prev = context.getCurrentKey();
-                        logger.info("reassigning prev to " + prev);
-                    }
-                    if (takes >= 101) {
-                        logger.info("takes are " + takes);
-                        while (context.nextKey() && context.getCurrentKey().getBigramDecade().getDecade() == currentDecade) {
-                            logger.info("advancing through bdo " + context.getCurrentKey());
-                        }
-                        logger.info("finished advancing beyond current decade");
-
-                    }
-                    takes = 0;
-                    Iterator<IntWritable> iter = context.getValues().iterator();
-                    if (iter instanceof ReduceContext.ValueIterator) {
-                        ((ReduceContext.ValueIterator)iter).resetBackupStore();
-                    }
-                }
-            } finally {
-                this.cleanup(context);
-            }
-        }
-
-        @Override
-        public void reduce(BigramDecadeOccurrences key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-//            logger.info("got bdo " + key);
-//            if (takes.getAndIncrement() < 100) {
-                logger.info("writing bdo " + key);
-                context.write(key, one);
+//        @Override
+//        public void run(Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable>.Context context) throws IOException, InterruptedException {
+//            this.setup(context);
+//            logger.info("inside run function");
+//            logger.info("context current key: " + context.getCurrentKey());
+//            int takes = 0;
+//            IntWritable currentDecade;
+//            BigramDecadeOccurrences prev;
+//            try {
+//                context.nextKey();
+//                while(context.getCurrentKey() != null) {
+//                    prev = context.getCurrentKey();
+//                    logger.info("context current key: " + context.getCurrentKey());
+//                    currentDecade = context.getCurrentKey().getBigramDecade().getDecade();
+//                    logger.info("current decade: " + currentDecade);
+//                    while (context.getCurrentKey().getBigramDecade().getDecade() == currentDecade && takes++ <= 100 && context.nextKeyValue()){
+//                        logger.info("calling reduce with bdo " + prev);
+//                        this.reduce(prev, context.getValues(), context);
+//                        prev = context.getCurrentKey();
+//                        logger.info("reassigning prev to " + prev);
+//                    }
+//                    if (takes >= 101) {
+//                        logger.info("takes are " + takes);
+//                        while (context.nextKey() && context.getCurrentKey().getBigramDecade().getDecade() == currentDecade) {
+//                            logger.info("advancing through bdo " + context.getCurrentKey());
+//                        }
+//                        logger.info("finished advancing beyond current decade");
+//
+//                    }
+//                    takes = 0;
+//                    Iterator<IntWritable> iter = context.getValues().iterator();
+//                    if (iter instanceof ReduceContext.ValueIterator) {
+//                        ((ReduceContext.ValueIterator)iter).resetBackupStore();
+//                    }
+//                }
+//            } finally {
+//                this.cleanup(context);
 //            }
-//            logger.info("takes are " + takes.get());
+//        }
+
+        @Override
+        public void reduce(IntWritable key, Iterable<BigramDecadeOccurrences> values, Context context) throws IOException, InterruptedException {
+            logger.info("got bdo " + key);
+            Iterator<BigramDecadeOccurrences> iter = values.iterator();
+            while (takes.getAndIncrement() < 100 && iter.hasNext()) {
+                logger.info("writing bdo " + key);
+                context.write(iter.next(), one);
+            }
 //            int takes = 0;
 //            IntWritable currentDecade = key.getBigramDecade().getDecade();
 //            while (iter.hasNext()) {
@@ -118,6 +120,7 @@ public class step2SortBigramsDecadeByOccurrence {
 //                    curr_bdo = iter.next();
 //                takes = 0;
 //            }
+
         }
 
     }
