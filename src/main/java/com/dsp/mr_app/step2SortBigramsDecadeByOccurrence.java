@@ -57,14 +57,14 @@ public class step2SortBigramsDecadeByOccurrence {
 
     public static class BigramOccurrencesReducer extends Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable> {
         private IntWritable result = new IntWritable();
-        private IntWritable currentDecade = new IntWritable();
 
         @Override
         public void run(Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable>.Context context) throws IOException, InterruptedException {
             this.setup(context);
             logger.info("inside run function");
             logger.info("context current key: " + context.getCurrentKey());
-            int count = 0;
+            int takes = 0;
+            IntWritable currentDecade;
             BigramDecadeOccurrences prev;
             try {
                 context.nextKey();
@@ -73,20 +73,21 @@ public class step2SortBigramsDecadeByOccurrence {
                     logger.info("context current key: " + context.getCurrentKey());
                     currentDecade = context.getCurrentKey().getBigramDecade().getDecade();
                     logger.info("current decade: " + currentDecade);
-                    while (context.getCurrentKey().getBigramDecade().getDecade() == currentDecade && count++ <= 100 && context.nextKeyValue()){
+                    while (context.getCurrentKey().getBigramDecade().getDecade() == currentDecade && takes++ <= 100 && context.nextKeyValue()){
                         logger.info("calling reduce with bdo " + prev);
                         this.reduce(prev, context.getValues(), context);
                         prev = context.getCurrentKey();
-                        logger.info("reassigning prev to" + prev);
+                        logger.info("reassigning prev to " + prev);
                     }
-                    if (count >= 101) {
-                        logger.info("count is 101");
+                    if (takes >= 101) {
+                        logger.info("takes are " + takes);
                         while (context.nextKey() && context.getCurrentKey().getBigramDecade().getDecade() == currentDecade) {
+                            logger.info("advancing through bdo " + context.getCurrentKey());
                         }
                         logger.info("finished advancing beyond current decade");
 
                     }
-                    count = 0;
+                    takes = 0;
                     Iterator<IntWritable> iter = context.getValues().iterator();
                     if (iter instanceof ReduceContext.ValueIterator) {
                         ((ReduceContext.ValueIterator)iter).resetBackupStore();
