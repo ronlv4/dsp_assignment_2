@@ -131,8 +131,8 @@ public class step2SortBigramsDecadeByOccurrence {
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step2SortBigramsDecadeByOccurrence.class);
         job.setMapperClass(BigramOccurrencesMapper.class);
-        job.setMapOutputKeyClass(BigramDecadeOccurrences.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputValueClass(BigramDecadeOccurrences.class);
 //        job.setCombinerClass(BigramOccurrencesReducer.class);
         job.setReducerClass(BigramOccurrencesReducer.class);
         job.setOutputKeyClass(BigramDecadeOccurrences.class);
