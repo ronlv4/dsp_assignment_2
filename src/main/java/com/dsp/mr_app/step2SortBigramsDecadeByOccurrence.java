@@ -63,13 +63,13 @@ public class step2SortBigramsDecadeByOccurrence {
         public void run(Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable>.Context context) throws IOException, InterruptedException {
             this.setup(context);
             logger.info("inside run function");
-            logger.info("context curren key: " + context.getCurrentKey());
+            logger.info("context current key: " + context.getCurrentKey());
             int count = 0;
             try {
                 context.nextKey();
                 while(context.getCurrentKey() != null) {
                     BigramDecadeOccurrences prev = context.getCurrentKey();
-                    logger.info("context curren key: " + context.getCurrentKey());
+                    logger.info("context current key: " + context.getCurrentKey());
                     currentDecade = context.getCurrentKey().getBigramDecade().getDecade();
                     logger.info("current decade: " + currentDecade);
                     while (context.getCurrentKey().getBigramDecade().getDecade() == currentDecade && count++ <= 100 && context.nextKey()){

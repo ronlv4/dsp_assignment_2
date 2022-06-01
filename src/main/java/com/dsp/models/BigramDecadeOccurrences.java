@@ -38,7 +38,9 @@ public class BigramDecadeOccurrences implements WritableComparable<BigramDecadeO
          */
         return  bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) < 0 ? -1 :
                 bigramDecade.getDecade().compareTo(o.getBigramDecade().getDecade()) > 0 ? 1 :
-                occurrences.compareTo(o.getOccurrences()) * (-1);
+                occurrences.compareTo(o.getOccurrences()) < 0 ? 1 :
+                occurrences.compareTo(o.getOccurrences()) > 0 ? -1 :
+                bigramDecade.getBigram().compareTo(o.bigramDecade.getBigram());
     }
 
     @Override
