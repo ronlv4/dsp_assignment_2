@@ -16,7 +16,9 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class step2SortBigramsDecadeByOccurrence {
@@ -24,7 +26,7 @@ public class step2SortBigramsDecadeByOccurrence {
     public static final Logger logger = Logger.getLogger(step2SortBigramsDecadeByOccurrence.class);
     private static IntWritable one = new IntWritable(1);
 
-    public static class BigramOccurrencesMapper extends Mapper<Object, Text, IntWritable, BigramDecadeOccurrences> {
+    public static class BigramOccurrencesMapper extends Mapper<Object, Text, BigramDecadeOccurrences, IntWritable> {
 
         private Text w1 = new Text();
         private Text w2 = new Text();
@@ -50,16 +52,17 @@ public class step2SortBigramsDecadeByOccurrence {
                 } catch (NumberFormatException ignored) {
                     continue;
                 }
-                context.write(bigramDecade.getDecade(), new BigramDecadeOccurrences(bigramDecade, occurrences));
-//                context.write(new BigramDecadeOccurrences(bigramDecade, occurrences), one); //bigram:200:2560  1
+//                context.write(bigramDecade.getDecade(), new BigramDecadeOccurrences(bigramDecade, occurrences));
+                context.write(new BigramDecadeOccurrences(bigramDecade, occurrences), one); //bigram:200:2560  1
             }
         }
     }
 
-    public static class BigramOccurrencesReducer extends Reducer<IntWritable, BigramDecadeOccurrences, BigramDecadeOccurrences, IntWritable> {
+    public static class BigramOccurrencesReducer extends Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable> {
         private IntWritable result = new IntWritable();
         private static AtomicInteger takes = new AtomicInteger(0);
         private static AtomicInteger currentDecade = new AtomicInteger(0);
+        private static ConcurrentHashMap<Integer, Integer> decadeCountMap = new ConcurrentHashMap<>();
 
 //        @Override
 //        public void run(Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable>.Context context) throws IOException, InterruptedException {
@@ -102,12 +105,12 @@ public class step2SortBigramsDecadeByOccurrence {
 //        }
 
         @Override
-        public void reduce(IntWritable key, Iterable<BigramDecadeOccurrences> values, Context context) throws IOException, InterruptedException {
+        public void reduce(BigramDecadeOccurrences key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             logger.info("got bdo " + key);
-            Iterator<BigramDecadeOccurrences> iter = values.iterator();
-            while (takes.getAndIncrement() < 100 && iter.hasNext()) {
-                logger.info("writing bdo " + key);
-                context.write(iter.next(), one);
+            currentDecade.set(key.getBigramDecade().getDecade().get());
+            if (decadeCountMap.getOrDefault(currentDecade.get(), 0) <= 100){
+                decadeCountMap.compute(currentDecade.get(), (decade, count) -> count == null ? 1 : count + 1);
+                context.write(key, one);
             }
 //            int takes = 0;
 //            IntWritable currentDecade = key.getBigramDecade().getDecade();
