@@ -32,8 +32,8 @@ public class step2SortBigramsDecadeByOccurrence {
         @Override
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             logger.info("got from record reader the line " + value);
-            String[] bdosLine= value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
-            Iterator<String> bdoIterator = Arrays.stream(bdosLine).iterator();
+            String[] bdosLines= value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
+            Iterator<String> bdoIterator = Arrays.stream(bdosLines).iterator();
             String bdoLine;
             IntWritable occurrences;
             BigramDecade bigramDecade;
@@ -41,7 +41,7 @@ public class step2SortBigramsDecadeByOccurrence {
                 bdoLine = bdoIterator.next();
                 logger.info("processing line " + bdoLine);
                 String[] lineElements = bdoLine.split("\\t");
-                logger.info("splitted line %s into: " + Arrays.toString(lineElements));
+                logger.info("splitted into: " + Arrays.toString(lineElements));
                 try {
                     bigramDecade = BigramDecade.fromString(lineElements[0]);
                     occurrences = new IntWritable(Integer.parseInt((lineElements[1])));

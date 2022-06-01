@@ -26,9 +26,9 @@ public class step1BigramDecadeCount {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             logger.info("got from record reader the line " + value);
-            String[] bigramsLine = value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
-            logger.info("splitted line into: " + Arrays.toString(bigramsLine));
-            Iterator<String> bigramItertor = Arrays.stream(bigramsLine).iterator();
+            String[] bigramLines = value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
+            logger.info("splitted line into: " + Arrays.toString(bigramLines));
+            Iterator<String> bigramItertor = Arrays.stream(bigramLines).iterator();
             String bigramLine;
             int year;
             IntWritable count;
