@@ -65,18 +65,21 @@ public class step2SortBigramsDecadeByOccurrence {
             logger.info("inside run function");
             logger.info("context current key: " + context.getCurrentKey());
             int count = 0;
+            BigramDecadeOccurrences prev;
             try {
                 context.nextKey();
                 while(context.getCurrentKey() != null) {
-                    BigramDecadeOccurrences prev = context.getCurrentKey();
+                    prev = context.getCurrentKey();
                     logger.info("context current key: " + context.getCurrentKey());
                     currentDecade = context.getCurrentKey().getBigramDecade().getDecade();
                     logger.info("current decade: " + currentDecade);
                     while (context.getCurrentKey().getBigramDecade().getDecade() == currentDecade && count++ <= 100 && context.nextKeyValue()){
+                        logger.info("calling reduce with bdo " + prev);
                         this.reduce(prev, context.getValues(), context);
                         prev = context.getCurrentKey();
+                        logger.info("reassigning prev to" + prev);
                     }
-                    if (count == 101) {
+                    if (count >= 101) {
                         logger.info("count is 101");
                         while (context.nextKey() && context.getCurrentKey().getBigramDecade().getDecade() == currentDecade) {
                         }
