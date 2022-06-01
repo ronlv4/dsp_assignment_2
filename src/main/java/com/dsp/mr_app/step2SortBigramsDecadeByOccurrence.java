@@ -130,7 +130,7 @@ public class step2SortBigramsDecadeByOccurrence {
         job.setMapperClass(BigramOccurrencesMapper.class);
         job.setMapOutputKeyClass(BigramDecadeOccurrences.class);
         job.setMapOutputValueClass(IntWritable.class);
-        job.setCombinerClass(BigramOccurrencesReducer.class);
+//        job.setCombinerClass(BigramOccurrencesReducer.class);
         job.setReducerClass(BigramOccurrencesReducer.class);
         job.setOutputKeyClass(BigramDecadeOccurrences.class);
         job.setOutputValueClass(IntWritable.class);
