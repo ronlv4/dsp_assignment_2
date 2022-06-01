@@ -77,6 +77,7 @@ public class step2SortBigramsDecadeByOccurrence {
 
         @Override
         public void reduce(BigramDecadeOccurrences key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+            logger.info("got bdo " + key);
             context.write(key, one);
 //            int takes = 0;
 //            Iterator<BigramDecadeOccurrences> iter = values.iterator();
