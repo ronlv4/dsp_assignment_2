@@ -69,14 +69,19 @@ public class step2SortBigramsDecadeByOccurrence {
                 context.nextKey();
                 while(context.getCurrentKey() != null) {
                     BigramDecadeOccurrences prev = context.getCurrentKey();
+                    logger.info("context curren key: " + context.getCurrentKey());
                     currentDecade = context.getCurrentKey().getBigramDecade().getDecade();
+                    logger.info("current decade: " + currentDecade);
                     while (context.getCurrentKey().getBigramDecade().getDecade() == currentDecade && count++ <= 100 && context.nextKey()){
                         this.reduce(prev, context.getValues(), context);
                         prev = context.getCurrentKey();
                     }
                     if (count == 101) {
+                        logger.info("count is 101");
                         while (context.nextKey() && context.getCurrentKey().getBigramDecade().getDecade() == currentDecade) {
                         }
+                        logger.info("finished advancing beyond current decade");
+
                     }
                     count = 0;
                     Iterator<IntWritable> iter = context.getValues().iterator();
