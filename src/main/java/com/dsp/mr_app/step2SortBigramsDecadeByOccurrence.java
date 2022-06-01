@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class step2SortBigramsDecadeByOccurrence {
 
     public static final Logger logger = Logger.getLogger(step2SortBigramsDecadeByOccurrence.class);
+    public static final int MAX_BIGRAMS = 5;
     private static IntWritable one = new IntWritable(1);
 
     public static class BigramOccurrencesMapper extends Mapper<Object, Text, BigramDecadeOccurrences, IntWritable> {
@@ -108,7 +109,7 @@ public class step2SortBigramsDecadeByOccurrence {
         public synchronized void reduce(BigramDecadeOccurrences key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             logger.info("got bdo " + key);
             currentDecade.set(key.getBigramDecade().getDecade().get());
-            if (decadeCountMap.getOrDefault(currentDecade.get(), 0) <= 100){
+            if (decadeCountMap.getOrDefault(currentDecade.get(), 0) <= MAX_BIGRAMS){
                 decadeCountMap.compute(currentDecade.get(), (decade, count) -> count == null ? 1 : count + 1);
                 context.write(key, one);
             }
