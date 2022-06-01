@@ -54,7 +54,7 @@ public class step2SortBigramsDecadeByOccurrence {
                     continue;
                 }
 //                context.write(bigramDecade.getDecade(), new BigramDecadeOccurrences(bigramDecade, occurrences));
-                context.write(new BigramDecadeOccurrences(bigramDecade, occurrences), one); //bigram:200:2560  1
+                context.write(new BigramDecadeOccurrences(bigramDecade, occurrences), null); //bigram:200:2560  1
             }
         }
     }
@@ -109,9 +109,9 @@ public class step2SortBigramsDecadeByOccurrence {
         public synchronized void reduce(BigramDecadeOccurrences key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             logger.info("got bdo " + key);
             currentDecade.set(key.getBigramDecade().getDecade().get());
-            if (decadeCountMap.getOrDefault(currentDecade.get(), 0) <= MAX_BIGRAMS){
+            if (decadeCountMap.getOrDefault(currentDecade.get(), 0) < MAX_BIGRAMS){
                 decadeCountMap.compute(currentDecade.get(), (decade, count) -> count == null ? 1 : count + 1);
-                context.write(key, one);
+                context.write(key, null);
             }
 //            int takes = 0;
 //            IntWritable currentDecade = key.getBigramDecade().getDecade();
