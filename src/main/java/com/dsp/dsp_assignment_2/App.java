@@ -5,23 +5,28 @@ import com.dsp.aws.emr.CreateCluster;
 import com.dsp.mr_app.step1BigramDecadeCount;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.emr.EmrClient;
 import software.amazon.awssdk.services.emr.model.*;
 
 public class App {
+    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
+    public static final Region REGION = Region.US_EAST_1;
+
     public static void main(String[] args) {
-        EmrClient emr = EmrClient.builder().build();
+//        String language = args[1];
+        EmrClient emr = EmrClient.builder().region(REGION).build();
 
 //        CreateCluster.createCluster(emr,
 //               "linux_laptop",
-//                "s3://dsp-assignment-2/logs",
-//                1);
+//                BUCKET_HOME_SCHEME + "logs",
+//                3);
 //
-        AddSteps.addNewStep(emr, "j-1FWY7Q9HOBFWB",
-                "s3://dsp-assignment-2/myWordCount.jar",
-                "com.dsp.mr_app.step1BigramDecadeCount",
+        AddSteps.addNewStep(emr, "j-1P28BJJMFP7PR",
+                BUCKET_HOME_SCHEME + "myWordCount.jar",
+                "com.dsp.dsp_assignment_2.TestSteps",
                 new String[]{},
-                "wc3"
+                "wc4"
         );
 
 //        CreateCluster.createAppClusterWithStep(emr,
@@ -34,9 +39,9 @@ public class App {
 //        );
         System.exit(0);
         HadoopJarStepConfig hadoopJarStepConfig = HadoopJarStepConfig.builder()
-                .jar("s3://dsp-assignment-2/myWordCount.jar")
+                .jar(BUCKET_HOME_SCHEME + "myWordCount.jar")
                 .mainClass("com.dsp.mr_app.step1WordCount")
-                .args("s3://dsp-assignment-2/input/data")
+                .args(BUCKET_HOME_SCHEME + "input/data")
                 .build();
 
         StepConfig config = StepConfig
