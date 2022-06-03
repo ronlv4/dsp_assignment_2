@@ -1,6 +1,7 @@
 package com.dsp.mr_app;
 
 import com.dsp.models.UnigramDecade;
+import com.hadoop.mapreduce.LzoSplitInputFormat;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -133,7 +134,7 @@ public class UnigramCount {
         job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/eng-stopwords.txt"));
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt"));
-        KeyValueTextInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
+        LzoSplitInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-1grams/"));
         args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
