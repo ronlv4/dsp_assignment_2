@@ -139,7 +139,7 @@ public class UnigramCount {
         SequenceFileInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-1grams/"));
-        SequenceFileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "input/"));
+//        SequenceFileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "input/"));
         args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
 //        args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
