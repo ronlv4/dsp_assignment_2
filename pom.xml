@@ -8,6 +8,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <repositories>
+        <repository>
+            <id>twtr-repo</id>
+            <name>Twitter repo</name>
+            <url>https://maven.twttr.com</url>
+        </repository>
+    </repositories>
     <!-- setting language level to 8, was 5 before-->
     <build>
         <plugins>
@@ -102,6 +109,11 @@
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-mapreduce-client-shuffle</artifactId>
             <version>3.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hadoop.gplcompression</groupId>
+            <artifactId>hadoop-lzo</artifactId>
+            <version>0.4.20</version>
         </dependency>
         <dependency>
             <groupId>org.javatuples</groupId>
