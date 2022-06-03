@@ -1,7 +1,11 @@
 package com.dsp.mr_app;
 
 import com.dsp.models.UnigramDecade;
+import com.hadoop.compression.lzo.*;
+import com.hadoop.compression.lzo.LzoInputFormatCommon;
+import com.hadoop.compression.lzo.LzopInputStream;
 import com.hadoop.mapreduce.LzoSplitInputFormat;
+import com.hadoop.compression.lzo.LzopInputStream
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -9,11 +13,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.CompressedSplitLineReader;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
-
-
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
@@ -24,6 +23,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
+
+import static org.apache.hadoop.mapreduce.lib.input.FileInputFormat.setInputPaths;
 
 public class UnigramCount {
 
@@ -134,7 +135,7 @@ public class UnigramCount {
         job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/eng-stopwords.txt"));
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt"));
-        LzoSplitInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
+        SequenceFileInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-1grams/"));
         args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
