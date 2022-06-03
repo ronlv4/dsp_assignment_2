@@ -111,11 +111,6 @@
             <version>3.3.3</version>
         </dependency>
         <dependency>
-            <groupId>com.hadoop.gplcompression</groupId>
-            <artifactId>hadoop-lzo</artifactId>
-            <version>0.4.20</version>
-        </dependency>
-        <dependency>
             <groupId>org.javatuples</groupId>
             <artifactId>javatuples</artifactId>
             <version>1.2</version>
