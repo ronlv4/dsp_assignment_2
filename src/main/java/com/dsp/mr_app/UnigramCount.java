@@ -75,7 +75,8 @@ public class UnigramCount {
 
         @Override
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            logger.info("got from record reader: " + value.toString());
+            logger.info("key: " + key);
+            logger.info("value: " + value);
             String[] unigramLines = value.toString().split("\\R");
             Iterator<String> unigramItertor = Arrays.stream(unigramLines).iterator();
             String unigramLine;
