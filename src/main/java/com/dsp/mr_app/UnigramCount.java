@@ -10,7 +10,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.CompressedSplitLineReader;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileAsBinaryInputFormat;
 
 
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -134,7 +133,7 @@ public class UnigramCount {
         job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/eng-stopwords.txt"));
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt"));
-        SequenceFileAsBinaryInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
+        KeyValueTextInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-1grams/"));
         args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
