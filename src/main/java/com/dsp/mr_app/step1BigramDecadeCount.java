@@ -54,8 +54,7 @@ public class step1BigramDecadeCount {
     public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, IntWritable> {
         private final IntWritable result = new IntWritable();
 
-        public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context)
-                throws IOException, InterruptedException {
+        public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             int sum = 0;
             logger.info("starting to count occurrences for " + key);
             for (IntWritable val : values) {
