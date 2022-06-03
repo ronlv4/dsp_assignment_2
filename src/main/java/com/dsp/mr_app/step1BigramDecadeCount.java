@@ -21,13 +21,14 @@ import java.util.Iterator;
 public class step1BigramDecadeCount {
 
     public static final Logger logger = Logger.getLogger(step1BigramDecadeCount.class);
+    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
+
 
     public static class BigramMapper extends Mapper<Object, Text, BigramDecade, IntWritable> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             logger.info("got from record reader the line " + value);
             String[] bigramLines = value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
-            logger.info("splitted line into: " + Arrays.toString(bigramLines));
             Iterator<String> bigramItertor = Arrays.stream(bigramLines).iterator();
             String bigramLine;
             int year;
@@ -36,19 +37,15 @@ public class step1BigramDecadeCount {
                 bigramLine = bigramItertor.next();
                 logger.info("processing line " + bigramLine);
                 String[] lineElements = bigramLine.split("\\t");
-                logger.info("splitted line %s into: " + Arrays.toString(lineElements));
                 Text bigram = new Text(lineElements[0]);
-                logger.info("the bigram is " + bigram);
                 try {
                     year = Integer.parseInt(lineElements[1]);
                     count = new IntWritable(Integer.parseInt((lineElements[2])));
-                    logger.info("the year is " + year);
-                    logger.info("the count is " + count.get());
                 } catch (NumberFormatException ignored) {
                     continue;
                 }
                 IntWritable decade = new IntWritable(year / 10);
-                logger.info("the decade is " + decade.get());
+                logger.info("writing bigram '" + bigram + "', decade: " + decade + ", count: " + count);
                 context.write(new BigramDecade(bigram, decade), count);
             }
         }
@@ -85,9 +82,11 @@ public class step1BigramDecadeCount {
         job.setOutputKeyClass(BigramDecade.class);
         job.setOutputValueClass(IntWritable.class);
         //FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
-        FileInputFormat.addInputPath(job, new Path("/home/hadoop/input/"));
+        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-2grams/"));
+//        FileInputFormat.addInputPath(job, new Path("/home/hadoop/input/"));
         //FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
-        args[0] = "/home/hadoop/output" + System.currentTimeMillis();
+//        args[0] = "/home/hadoop/output" + System.currentTimeMillis();
+        args[0] = BUCKET_HOME_SCHEME + "output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
         job.waitForCompletion(true);
         logger.info("Finished job 1 Successfully\n");

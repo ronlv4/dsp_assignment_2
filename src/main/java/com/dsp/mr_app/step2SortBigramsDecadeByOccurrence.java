@@ -25,6 +25,7 @@ public class step2SortBigramsDecadeByOccurrence {
 
     public static final Logger logger = Logger.getLogger(step2SortBigramsDecadeByOccurrence.class);
     public static final int MAX_BIGRAMS = 5;
+    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
     private static IntWritable one = new IntWritable(1);
 
     public static class BigramOccurrencesMapper extends Mapper<Object, Text, BigramDecadeOccurrences, IntWritable> {
@@ -44,16 +45,14 @@ public class step2SortBigramsDecadeByOccurrence {
                 bdoLine = bdoIterator.next();
                 logger.info("processing line " + bdoLine);
                 String[] lineElements = bdoLine.split("\\t");
-                logger.info("splitted into: " + Arrays.toString(lineElements));
                 try {
                     bigramDecade = BigramDecade.fromString(lineElements[0]);
                     occurrences = new IntWritable(Integer.parseInt((lineElements[1])));
-                    logger.info("the bd is: " + bigramDecade);
-                    logger.info("occurrences: " + occurrences.get());
                 } catch (NumberFormatException ignored) {
                     continue;
                 }
 //                context.write(bigramDecade.getDecade(), new BigramDecadeOccurrences(bigramDecade, occurrences));
+                logger.info("writing bigram " + bigramDecade + ", occurrences: " + occurrences);
                 context.write(new BigramDecadeOccurrences(bigramDecade, occurrences), one); //bigram:200:2560  1
             }
         }
@@ -113,20 +112,7 @@ public class step2SortBigramsDecadeByOccurrence {
                 decadeCountMap.compute(currentDecade.get(), (decade, count) -> count == null ? 1 : count + 1);
                 context.write(key, one);
             }
-//            int takes = 0;
-//            IntWritable currentDecade = key.getBigramDecade().getDecade();
-//            while (iter.hasNext()) {
-//                while (iter.hasNext() && curr_bdo.getBigramDecade().getDecade() == currentDecade && takes++ <= 100){
-//                    context.write(key, one);
-//                    curr_bdo = iter.next();
-//                }
-//                while (currentDecade == curr_bdo.getBigramDecade().getDecade())
-//                    curr_bdo = iter.next();
-//                takes = 0;
-//            }
-
         }
-
     }
 
     public static void main(String[] args) throws Exception {
@@ -142,9 +128,10 @@ public class step2SortBigramsDecadeByOccurrence {
         job.setOutputKeyClass(BigramDecadeOccurrences.class);
         job.setOutputValueClass(IntWritable.class);
 //        FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
+//        FileInputFormat.addInputPath(job, new Path("s3://dsp-assignment-2/google-2grams/"));
         FileInputFormat.addInputPath(job, new Path(args[0]));
 //        FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
-        FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/output" + System.currentTimeMillis()));
+        FileOutputFormat.setOutputPath(job, new Path(BUCKET_HOME_SCHEME+ "output" + System.currentTimeMillis()));
         System.exit(job.waitForCompletion(true) ? 0 : 1);
         logger.info("Finished job 2 Successfully\n");
     }
