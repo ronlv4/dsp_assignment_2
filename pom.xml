@@ -8,13 +8,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    <repositories>
-        <repository>
-            <id>twtr-repo</id>
-            <name>Twitter repo</name>
-            <url>https://maven.twttr.com</url>
-        </repository>
-    </repositories>
     <!-- setting language level to 8, was 5 before-->
     <build>
         <plugins>
