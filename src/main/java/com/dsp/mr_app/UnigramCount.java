@@ -9,6 +9,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
@@ -68,6 +69,7 @@ public class UnigramCount {
 
         @Override
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            logger.info("got from record reader: " + value.toString());
             String[] unigramLines = value.toString().split("\\R");
             Iterator<String> unigramItertor = Arrays.stream(unigramLines).iterator();
             String unigramLine;
@@ -127,7 +129,7 @@ public class UnigramCount {
         job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/eng-stopwords.txt"));
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt"));
-        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/"));
+        SequenceFileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-1grams/"));
         args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
 //        args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
