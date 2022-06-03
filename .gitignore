@@ -27,4 +27,4 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 # hadoop
-outputs/
+outputs/*
