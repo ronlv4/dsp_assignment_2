@@ -1,11 +1,6 @@
 package com.dsp.mr_app;
 
 import com.dsp.models.UnigramDecade;
-import com.hadoop.compression.lzo.*;
-import com.hadoop.compression.lzo.LzoInputFormatCommon;
-import com.hadoop.compression.lzo.LzopInputStream;
-import com.hadoop.mapreduce.LzoSplitInputFormat;
-import com.hadoop.compression.lzo.LzopInputStream
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -22,9 +17,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
-import java.util.*;
-
-import static org.apache.hadoop.mapreduce.lib.input.FileInputFormat.setInputPaths;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class UnigramCount {
 
