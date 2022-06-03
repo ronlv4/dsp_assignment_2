@@ -11,13 +11,15 @@ import software.amazon.awssdk.services.emr.model.*;
 public class App {
     public static void main(String[] args) {
         EmrClient emr = EmrClient.builder().build();
-
-//        CreateCluster.createCluster(emr,
+        String jobFlowId = "j-1B9F8D9D8D8B8E";
+//        jobFlowId = CreateCluster.createCluster(emr,
 //               "linux_laptop",
 //                "s3://dsp-assignment-2/logs",
 //                1);
 //
-        AddSteps.addNewStep(emr, "j-1FWY7Q9HOBFWB",
+        AddSteps.addNewStep(
+                emr,
+                jobFlowId,
                 "s3://dsp-assignment-2/myWordCount.jar",
                 "com.dsp.mr_app.step1BigramDecadeCount",
                 new String[]{},
