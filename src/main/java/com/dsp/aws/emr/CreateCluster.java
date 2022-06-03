@@ -51,6 +51,7 @@ public class CreateCluster {
 //                    .ec2SubnetId("subnet-206a9c58")
                     .ec2KeyName(keys)
                     .instanceCount(instanceCount)
+                    .hadoopVersion("3.3.3")
                     .keepJobFlowAliveWhenNoSteps(true)
                     .masterInstanceType("m3.xlarge")
                     .slaveInstanceType("m3.xlarge")
@@ -59,7 +60,7 @@ public class CreateCluster {
 
             RunJobFlowRequest jobFlowRequest = RunJobFlowRequest.builder()
                     .name("My Job Flow")
-                    .releaseLabel("emr-5.20.0")
+                    .releaseLabel("emr-6.6.0")
                     .logUri(logUri)
                     .serviceRole("EMR_DefaultRole")
                     .jobFlowRole("EMR_EC2_DefaultRole")
