@@ -32,6 +32,8 @@ public class App {
                 "wc4"
         );
 
+        
+
 //        CreateCluster.createAppClusterWithStep(emr,
 //                "s3://dsp-assignment-2/myWordCount.jar",
 //                "com.dsp.mr_app.step1BigramDecadeCount",
