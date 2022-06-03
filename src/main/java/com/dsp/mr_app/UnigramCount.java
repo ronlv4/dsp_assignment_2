@@ -119,7 +119,7 @@ public class UnigramCount {
         job.setMapperClass(UnigramMapper.class);
         job.setCombinerClass(UnigramDecadeReducer.class);
         job.setReducerClass(UnigramDecadeReducer.class);
-        job.setOutputKeyClass(Text.class);
+        job.setOutputKeyClass(UnigramDecade.class);
         job.setOutputValueClass(IntWritable.class);
 
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
