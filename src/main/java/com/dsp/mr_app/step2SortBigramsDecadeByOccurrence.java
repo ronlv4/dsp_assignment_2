@@ -23,12 +23,36 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class step2SortBigramsDecadeByOccurrence {
 
+    /*
+    step2SortBigramsDecadeByOccurrence Input:
+        Key: line number
+        Value: <w1 w2:decade> occurrences
+
+    step2SortBigramsDecadeByOccurrence Output:
+        Key: <w1 w2:decade:occurrences>
+        Value: one
+        Sort by: decade > occurrences > w1 w2
+        Limit: 100 Per decade
+     */
+
     public static final Logger logger = Logger.getLogger(step2SortBigramsDecadeByOccurrence.class);
     public static final int MAX_BIGRAMS = 5;
     public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
     private static IntWritable one = new IntWritable(1);
 
     public static class BigramOccurrencesMapper extends Mapper<Object, Text, BigramDecadeOccurrences, IntWritable> {
+        /*
+        Mapper Input:
+            Key: line number
+            Value: <w1 w2:decade> occurrences
+            Where:
+                w1 w2 is the bigram
+                decade is the decade of the bigram
+                occurrences is the number of occurrences of the bigram in the decade
+        Mapper Output:
+            Key: <w1 w2:decade:occurrences>
+            Value: one
+         */
 
         private Text w1 = new Text();
         private Text w2 = new Text();
@@ -59,6 +83,19 @@ public class step2SortBigramsDecadeByOccurrence {
     }
 
     public static class BigramOccurrencesReducer extends Reducer<BigramDecadeOccurrences, IntWritable, BigramDecadeOccurrences, IntWritable> {
+
+/*
+Reducer Input: same as mapper output
+    Key: <w1 w2:decade:occurrences>
+    Value: Iterable<one>
+    Sort by: decade > occurrences > w1 w2
+Reducer Output:
+    Key: <w1 w2:decade:occurrences>
+    Value: one
+    Sort by: decade > occurrences > w1 w2
+    Limit: 100 Per decade
+ */
+
         private IntWritable result = new IntWritable();
         private static AtomicInteger takes = new AtomicInteger(0);
         private static AtomicInteger currentDecade = new AtomicInteger(0);

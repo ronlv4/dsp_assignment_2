@@ -19,12 +19,29 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class step1BigramDecadeCount {
+    /*
+    step1BigramDecadeCount Input:
+        Key: line number of lzo file
+        Value: w1 w2 TAB year TAB occurrences TAB booksRefs
+
+    step1BigramDecadeCount Output:
+        Key: <w1 w2:decade>
+        Value: occurrences of the bigram <w1 w2> in the decade
+     */
 
     public static final Logger logger = Logger.getLogger(step1BigramDecadeCount.class);
     public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
 
     public static class BigramMapper extends Mapper<Object, Text, BigramDecade, IntWritable> {
+        /*
+        Mapper Input:
+            Key: line number
+            Value: w1 w2 TAB year TAB occurrences TAB booksRefs
+        Mapper Output:
+            Key: <w1 w2:decade>
+            Value: occurrences of the bigram <w1 w2> in the year
+         */
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             logger.info("got from record reader the line " + value);
@@ -52,6 +69,14 @@ public class step1BigramDecadeCount {
     }
 
     public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, IntWritable> {
+        /*
+        Reducer Input:
+            same as mapper output
+
+        Reducer Output:
+            Key: <w1 w2:decade>
+            Value: occurrences of thr bigram <w1 w2> in the decade
+         */
         private final IntWritable result = new IntWritable();
 
         public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
