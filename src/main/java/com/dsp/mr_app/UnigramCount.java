@@ -99,6 +99,7 @@ public class UnigramCount {
                 IntWritable decade = new IntWritable(year / 10);
                 logger.info("writing unigram '" + unigram + "', decade: " + decade + ", count: " + count);
                 context.write(new UnigramDecade(unigram, decade), count);
+                context.write(new UnigramDecade(new Text("*"), decade), count); // for counting total words per decade
             }
         }
     }
@@ -137,8 +138,7 @@ public class UnigramCount {
 //        SequenceFileInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
         SequenceFileInputFormat.setInputPaths(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/1gram/data"));
 
-//        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/data"));
-//        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-1grams/"));
+//        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/1grams-sample.txt"));
 //        args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
         args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
