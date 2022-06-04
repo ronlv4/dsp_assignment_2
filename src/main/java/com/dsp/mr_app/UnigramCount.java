@@ -135,7 +135,7 @@ public class UnigramCount {
         job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt"));
         job.setInputFormatClass(SequenceFileInputFormat.class);
 //        SequenceFileInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
-        SequenceFileInputFormat.setInputPaths(job, new Path(BUCKET_HOME_SCHEME + "input/"));
+        SequenceFileInputFormat.setInputPaths(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/1gram/data"));
 
 //        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/data"));
 //        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-1grams/"));
