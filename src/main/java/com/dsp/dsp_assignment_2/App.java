@@ -1,11 +1,5 @@
 package com.dsp.dsp_assignment_2;
 
-import com.dsp.aws.emr.AddSteps;
-import com.dsp.aws.emr.CreateCluster;
-import com.dsp.mr_app.step1BigramDecadeCount;
-import com.sun.tools.javac.util.List;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.emr.EmrClient;
 import software.amazon.awssdk.services.emr.model.*;
