@@ -18,19 +18,19 @@ public class App {
         EmrClient emr = EmrClient.builder().region(REGION).build();
 
         String jobFlowId = "j-ODR83P3DUR9H";
-//        jobFlowId = CreateCluster.createCluster(emr,
-//               "linux_laptop",
-//                BUCKET_HOME_SCHEME + "logs",
-//                3);
-//        System.out.println("JobFlowId: " + jobFlowId);
-        AddSteps.addNewStep(
-                emr,
-                jobFlowId,
-                BUCKET_HOME_SCHEME + "myWordCount.jar",
-                "com.dsp.dsp_assignment_2.TestSteps",
-                new String[]{},
-                "wc4"
-        );
+        jobFlowId = CreateCluster.createCluster(emr,
+               "linux_laptop",
+                BUCKET_HOME_SCHEME + "logs",
+                3);
+        System.out.println("JobFlowId: " + jobFlowId);
+//        AddSteps.addNewStep(
+//                emr,
+//                jobFlowId,
+//                BUCKET_HOME_SCHEME + "myWordCount.jar",
+//                "com.dsp.dsp_assignment_2.TestSteps",
+//                new String[]{},
+//                "wc5"
+//        );
 
         
 
