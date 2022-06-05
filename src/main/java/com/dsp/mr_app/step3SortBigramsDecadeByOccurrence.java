@@ -110,6 +110,7 @@ public class step3SortBigramsDecadeByOccurrence {
             // and initialize the map decadeCountMap
             FileSystem fileSystem = FileSystem.get(context.getConfiguration());
             RemoteIterator<LocatedFileStatus> it = fileSystem.listFiles(new Path(context.getConfiguration().get("step_1_output")), false); //TODO: set the path argument in the configuration
+            context.getCacheFiles();
             while (it.hasNext()) {
                 LocatedFileStatus fileStatus = it.next();
                 if (fileStatus.getPath().getName().startsWith("part")) {

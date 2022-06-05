@@ -19,20 +19,20 @@ public class App {
 //        String language = args[1];
         EmrClient emr = EmrClient.builder().region(REGION).build();
 
-//        String jobFlowId = "j-13WCCUKJB25DU";
-//        jobFlowId = CreateCluster.createCluster(emr,
-//               key,
+        String jobFlowId = "j-14OWNQOHT3Y43";
+//        jobFlowId = ClusterOperations.createCluster(emr,
+//                KEYS,
 //                BUCKET_HOME_SCHEME + "logs",
-//                3);
+//                5);
 //        System.out.println("JobFlowId: " + jobFlowId);
-//        AddSteps.addNewStep(
-//                emr,
-//                jobFlowId,
-//                BUCKET_HOME_SCHEME + "myWordCount.jar",
-//                "com.dsp.dsp_assignment_2.TestSteps",
-//                new String[]{},
-//                "wc5"
-//        );
+        StepsOperations.addNewStep(
+                emr,
+                jobFlowId,
+                BUCKET_HOME_SCHEME + "myWordCount.jar",
+                "com.dsp.dsp_assignment_2.TestSteps",
+                new String[]{},
+                "wc5"
+        );
 
 
         System.exit(0); // END OF TESTING SECTION
@@ -80,11 +80,11 @@ public class App {
                 .name("step3")
                 .build();
 
-        String jobFlowId = ClusterOperations.createClusterWithSteps(emr,
-                KEYS,
-                BUCKET_HOME_SCHEME + "logs",
-                INSTANCE_COUNT,
-                step1Config, step2Config, step3Config);
+//        String jobFlowId = ClusterOperations.createClusterWithSteps(emr,
+//                KEYS,
+//                BUCKET_HOME_SCHEME + "logs",
+//                INSTANCE_COUNT,
+//                step1Config, step2Config, step3Config);
 
         System.out.println("Ran JobFlow with id: " + jobFlowId);
     }

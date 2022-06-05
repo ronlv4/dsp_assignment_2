@@ -1,3 +1,5 @@
+# ignore all
 *
 
+# except this file (to sync directory with remote)
 !.gitignore
