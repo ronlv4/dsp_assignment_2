@@ -10,34 +10,36 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 public class BigramDecade implements WritableComparable<BigramDecade>{
-    private Text bigram;
+    private Bigram bigram;
     private IntWritable decade;
 
     public static final Logger logger = Logger.getLogger(BigramDecade.class);
 
     public BigramDecade() {
-        set(new Text(), new IntWritable());
+        set(new Bigram(), new IntWritable());
     }
 
-    public BigramDecade(Text bigram, IntWritable decade) {
+    public BigramDecade(Bigram bigram, IntWritable decade) {
         set(bigram, decade);
     }
 
-    public void set(Text bigram, IntWritable decade) {
+    public void set(Bigram bigram, IntWritable decade) {
         this.bigram = bigram;
         this.decade = decade;
     }
 
     public static BigramDecade fromString(String bigram){ // w1 w2:decade
         try {
-            return new BigramDecade(new Text(bigram.split(":")[0]), new IntWritable(Integer.parseInt(bigram.split(":")[1])));
+            Bigram b = new Bigram(new Text(bigram.split(":")[0].split(" ")[0]),
+                    new Text(bigram.split(":")[0].split(" ")[1]));
+            return new BigramDecade(b, new IntWritable(Integer.parseInt(bigram.split(":")[1])));
         }catch (Exception e){
             logger.error("unable to create a bigram decade out of " + bigram);
             throw e;
         }
     }
 
-    public Text getBigram() {
+    public Bigram getBigram() {
         return bigram;
     }
 
@@ -62,9 +64,12 @@ public class BigramDecade implements WritableComparable<BigramDecade>{
         Primary sort by Text bigram
         Secondary sort by IntWritable year
          */
-        return  bigram.compareTo(o.getBigram()) < 0 ? -1 :
-                bigram.compareTo(o.getBigram()) > 0 ? 1 :
-                decade.compareTo(o.getDecade());
+//        return  bigram.compareTo(o.getBigram()) < 0 ? -1 :
+//                bigram.compareTo(o.getBigram()) > 0 ? 1 :
+//                decade.compareTo(o.getDecade());
+
+        return  decade.compareTo(o.getDecade()) != 0 ? decade.compareTo(o.getDecade()) :
+                bigram.compareTo(o.getBigram());
     }
     @Override
     public String toString(){
