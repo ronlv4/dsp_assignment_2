@@ -8,7 +8,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
@@ -23,9 +22,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class UnigramCount {
+public class step1UnigramCount {
 
-    public static final Logger logger = Logger.getLogger(UnigramCount.class);
+    public static final Logger logger = Logger.getLogger(step1UnigramCount.class);
     public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
     public static class UnigramMapper extends Mapper<Object, Text, UnigramDecade, IntWritable> {
@@ -122,7 +121,7 @@ public class UnigramCount {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
-        job.setJarByClass(UnigramCount.class);
+        job.setJarByClass(step1UnigramCount.class);
         job.setMapperClass(UnigramMapper.class);
         job.setCombinerClass(UnigramDecadeReducer.class);
         job.setReducerClass(UnigramDecadeReducer.class);

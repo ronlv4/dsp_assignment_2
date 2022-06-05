@@ -1,7 +1,5 @@
 package com.dsp.models;
 
-import com.dsp.mr_app.step2SortBigramsDecadeByOccurrence;
-import org.apache.commons.math3.util.Pair;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
