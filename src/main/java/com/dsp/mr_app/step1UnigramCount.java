@@ -1,5 +1,6 @@
 package com.dsp.mr_app;
 
+import com.dsp.models.Unigram;
 import com.dsp.models.UnigramDecade;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -78,7 +79,7 @@ public class step1UnigramCount {
             Iterator<String> unigramItertor = Arrays.stream(unigramLines).iterator();
             String unigramLine;
             int year;
-            Text unigram;
+            Unigram unigram;
             IntWritable count;
             while (unigramItertor.hasNext()) {
                 context.getCounter(CountersEnum.INPUT_WORDS).increment(1);
@@ -86,7 +87,7 @@ public class step1UnigramCount {
                 logger.info("processing line " + unigramLine);
                 String[] lineElements = unigramLine.split("\\t");
                 try {
-                    unigram = (caseSensitive) ? new Text(lineElements[0]) : new Text(lineElements[0].toLowerCase());
+                    unigram = (caseSensitive) ? Unigram.fromString(lineElements[0]) : Unigram.fromString(lineElements[0].toLowerCase());
                     if (patternsToSkip.contains(unigram.toString())) {
                         context.getCounter(CountersEnum.SKIPPED_WORDS).increment(1);
                         continue;
@@ -99,7 +100,7 @@ public class step1UnigramCount {
                 IntWritable decade = new IntWritable(year / 10);
                 logger.info("writing unigram '" + unigram + "', decade: " + decade + ", count: " + count);
                 context.write(new UnigramDecade(unigram, decade), count);
-                context.write(new UnigramDecade(new Text("*"), decade), count); // for counting total words per decade
+                context.write(new UnigramDecade(Unigram.fromString("*"), decade), count); // for counting total words per decade
             }
         }
     }
