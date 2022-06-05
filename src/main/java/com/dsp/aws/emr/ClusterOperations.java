@@ -1,6 +1,8 @@
 package com.dsp.aws.emr;
 
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.services.ec2.model.InstanceType;
+
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.emr.EmrClient;
 import software.amazon.awssdk.services.emr.model.*;
@@ -8,40 +10,7 @@ import software.amazon.awssdk.services.emr.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreateCluster {
-    public static void main(String[] args) {
-
-        final String usage = "\n" +
-                "Usage: " +
-                "   <jar> <myClass> <keys> <logUri> <name>\n\n" +
-                "Where:\n" +
-                "   jar - A path to a JAR file run during the step. \n\n" +
-                "   myClass - The name of the main class in the specified Java file. \n\n" +
-                "   keys - The name of the Amazon EC2 key pair. \n\n" +
-                "   logUri - The Amazon S3 bucket where the logs are located (for example,  s3://<BucketName>/logs/). \n\n" +
-                "   name - The name of the job flow. \n\n";
-
-        if (args.length != 5) {
-            System.out.println(usage);
-            System.exit(1);
-        }
-
-        String jar = args[0];
-        String myClass = args[1];
-        String keys = args[2];
-        String logUri = args[3];
-        String name = args[4];
-        Region region = Region.US_WEST_2;
-        EmrClient emrClient = EmrClient.builder()
-                .region(region)
-                .credentialsProvider(ProfileCredentialsProvider.create())
-                .build();
-
-        String jobFlowId = createAppClusterWithStep(emrClient, jar, myClass, keys, logUri, name, 1);
-        System.out.println("The job flow id is " + jobFlowId);
-        emrClient.close();
-    }
-
+public class ClusterOperations {
     public static String createCluster(EmrClient emr,
                                        String keys,
                                        String logUri,
@@ -53,8 +22,9 @@ public class CreateCluster {
                     .instanceCount(instanceCount)
                     .hadoopVersion("3.3.3")
                     .keepJobFlowAliveWhenNoSteps(true)
-                    .masterInstanceType("m3.xlarge")
-                    .slaveInstanceType("m3.xlarge")
+                    .masterInstanceType(InstanceType.M3_XLARGE.toString())
+                    .slaveInstanceType(InstanceType.M3_XLARGE.toString())
+                    .placement(PlacementType.builder().availabilityZone("us-east-1a").build())
                     .build();
 
 
@@ -120,8 +90,8 @@ public class CreateCluster {
                     .ec2KeyName(keys)
                     .instanceCount(instanceCount)
                     .keepJobFlowAliveWhenNoSteps(true)
-                    .masterInstanceType("m3.xlarge")
-                    .slaveInstanceType("m3.xlarge")
+                    .masterInstanceType(InstanceType.M3_XLARGE.toString())
+                    .slaveInstanceType(InstanceType.M3_XLARGE.toString())
                     .build();
 
 

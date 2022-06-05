@@ -1,10 +1,5 @@
 package com.dsp.dsp_assignment_2;
 
-import com.dsp.aws.emr.AddSteps;
-import com.dsp.aws.emr.CreateCluster;
-import com.dsp.mr_app.step1BigramDecadeCount;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.emr.EmrClient;
 import software.amazon.awssdk.services.emr.model.*;
@@ -17,22 +12,26 @@ public class App {
 //        String language = args[1];
         EmrClient emr = EmrClient.builder().region(REGION).build();
 
-        String jobFlowId = "j-ODR83P3DUR9H";
+        String jobFlowId = "j-13WCCUKJB25DU";
 //        jobFlowId = CreateCluster.createCluster(emr,
 //               "linux_laptop",
 //                BUCKET_HOME_SCHEME + "logs",
 //                3);
 //        System.out.println("JobFlowId: " + jobFlowId);
-        AddSteps.addNewStep(
-                emr,
-                jobFlowId,
-                BUCKET_HOME_SCHEME + "myWordCount.jar",
-                "com.dsp.dsp_assignment_2.TestSteps",
-                new String[]{},
-                "wc4"
-        );
+//        AddSteps.addNewStep(
+//                emr,
+//                jobFlowId,
+//                BUCKET_HOME_SCHEME + "myWordCount.jar",
+//                "com.dsp.dsp_assignment_2.TestSteps",
+//                new String[]{},
+//                "wc5"
+//        );
 
-        
+        emr.cancelSteps(CancelStepsRequest.builder()
+                .clusterId(jobFlowId)
+                .stepIds("s-N2G1SEHO9TYJ")
+                .build());
+
 
 //        CreateCluster.createAppClusterWithStep(emr,
 //                "s3://dsp-assignment-2/myWordCount.jar",
