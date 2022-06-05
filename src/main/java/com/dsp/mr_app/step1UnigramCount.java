@@ -108,7 +108,7 @@ public class step1UnigramCount {
 
         @Override
         public int getPartition(UnigramDecade unigramDecade, IntWritable intWritable, int i) {
-            return (unigramDecade.getUnigram().toString().equals("*")) ? 0 : 1;
+            return (unigramDecade.getUnigram().toString().equals("*")) ? 1 : 0;
         }
     }
 
@@ -141,6 +141,7 @@ public class step1UnigramCount {
         job.setPartitionerClass(UnigramPartitioner.class);
         job.setCombinerClass(UnigramDecadeReducer.class);
         job.setReducerClass(UnigramDecadeReducer.class);
+        job.setNumReduceTasks(2);
         job.setOutputKeyClass(UnigramDecade.class);
         job.setOutputValueClass(IntWritable.class);
 
