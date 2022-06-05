@@ -23,7 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class step1BigramDecadeCount {
+public class step2BigramDecadeCount {
     /*
     step1BigramDecadeCount Input:
         Key: line number of lzo file
@@ -34,7 +34,7 @@ public class step1BigramDecadeCount {
         Value: occurrences of the bigram <w1 w2> in the decade
      */
 
-    public static final Logger logger = Logger.getLogger(step1BigramDecadeCount.class);
+    public static final Logger logger = Logger.getLogger(step2BigramDecadeCount.class);
     public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
 
@@ -103,7 +103,7 @@ public class step1BigramDecadeCount {
                     continue;
                 if (Arrays.stream(bigramStr.split("\\s")).anyMatch(patternsToSkip::contains)) {
                     logger.info("skipping line " + bigramLine);
-                    context.getCounter(step1BigramDecadeCount.BigramMapper.CountersEnum.SKIPPED_WORDS).increment(1);
+                    context.getCounter(step2BigramDecadeCount.BigramMapper.CountersEnum.SKIPPED_WORDS).increment(1);
                     continue;
                 }
                 Bigram bigram = new Bigram(new Text(bigramStr.split("\\s")[0]), new Text(bigramStr.split("\\s")[1]));
@@ -181,13 +181,13 @@ public class step1BigramDecadeCount {
             logger.error("not place to store output path");
             System.exit(1);
         }
-        logger.info("Starting " + step1BigramDecadeCount.class.getName() + " map reduce app");
+        logger.info("Starting " + step2BigramDecadeCount.class.getName() + " map reduce app");
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
         job.addCacheFile(new Path("/home/hadoop/stop-words/eng-stopwords.txt").toUri());
         job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
-        job.setJarByClass(step1BigramDecadeCount.class);
+        job.setJarByClass(step2BigramDecadeCount.class);
         job.setMapperClass(BigramMapper.class);
         job.setCombinerClass(IntSumCombiner.class);
         job.setReducerClass(IntSumReducer.class);
