@@ -28,7 +28,7 @@ public class step1UnigramCount {
     public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
     public static class UnigramMapper extends Mapper<Object, Text, UnigramDecade, IntWritable> {
-        static enum CountersEnum {
+        enum CountersEnum {
             INPUT_WORDS,
             SKIPPED_WORDS
         }
