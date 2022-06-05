@@ -38,13 +38,11 @@ public class App {
         System.exit(0); // END OF TESTING SECTION
         // Real App:
 
-        if (args.length > INSTANCE_COUNT){
-            String usage = "Usage: <case_sensitive> <language>";
+        if (args.length > 3 || args.length < 2) {
+            String usage = "Usage: <language> <case_sensitive>";
             System.out.println(usage);
             System.exit(1);
         }
-        boolean caseSensitive = Boolean.parseBoolean(args[1]);
-        String language = args[2];
 
         HadoopJarStepConfig step1 = HadoopJarStepConfig.builder()
                 .jar(BUCKET_HOME_SCHEME + "step1.jar")
@@ -59,7 +57,7 @@ public class App {
                 .build();
 
         HadoopJarStepConfig step2 = HadoopJarStepConfig.builder()
-.jar(BUCKET_HOME_SCHEME + "step2.jar")
+                .jar(BUCKET_HOME_SCHEME + "step2.jar")
                 .mainClass("step2BigramDecadeCount")
                 .args(args)
                 .build();
