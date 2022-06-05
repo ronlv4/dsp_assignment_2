@@ -48,6 +48,10 @@ public class step2BigramDecadeCount {
             Value: occurrences of the bigram <w1 w2> in the year
          */
 
+        enum CountersEnum {
+            INPUT_WORDS,
+            SKIPPED_WORDS
+        }
         private boolean caseSensitive;
         private Set<String> patternsToSkip = new HashSet<String>();
 
@@ -88,12 +92,18 @@ public class step2BigramDecadeCount {
             String bigramLine;
             int year;
             IntWritable count;
+            Text bigram;
             while (bigramItertor.hasNext()) {
                 bigramLine = bigramItertor.next();
                 logger.info("processing line " + bigramLine);
                 String[] lineElements = bigramLine.split("\\t");
-                Text bigram = new Text(lineElements[0]);
                 try {
+                    bigram = (caseSensitive) ? new Text(lineElements[0]) : new Text(lineElements[0].toLowerCase());
+                    if (Arrays.stream(bigram.toString().split("\\s")).anyMatch(patternsToSkip::contains)) {
+                        logger.info("skipping line " + bigramLine);
+                        context.getCounter(step2BigramDecadeCount.BigramMapper.CountersEnum.SKIPPED_WORDS).increment(1);
+                        continue;
+                    }
                     year = Integer.parseInt(lineElements[1]);
                     count = new IntWritable(Integer.parseInt((lineElements[2])));
                 } catch (NumberFormatException ignored) {
