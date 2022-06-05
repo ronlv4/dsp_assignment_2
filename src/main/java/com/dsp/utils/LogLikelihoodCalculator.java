@@ -2,10 +2,10 @@ package com.dsp.utils;
 
 public class LogLikelihoodCalculator {
 
-    private Integer c1;
-    private Integer c2;
-    private Integer c12;
-    private Integer N;
+    private final Integer c1;
+    private final Integer c2;
+    private final Integer c12;
+    private final Integer N;
 
     public LogLikelihoodCalculator(Integer c1, Integer c2, Integer c12, Integer n) {
         this.c1 = c1;
