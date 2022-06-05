@@ -138,6 +138,7 @@ public class step1UnigramCount {
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step1UnigramCount.class);
         job.setMapperClass(UnigramMapper.class);
+        job.setPartitionerClass(UnigramPartitioner.class);
         job.setCombinerClass(UnigramDecadeReducer.class);
         job.setReducerClass(UnigramDecadeReducer.class);
         job.setOutputKeyClass(UnigramDecade.class);
