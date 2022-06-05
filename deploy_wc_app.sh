@@ -8,4 +8,8 @@ mv target/dsp_assignment_2-1.0-SNAPSHOT.jar target/myWordCount.jar
 hadoop fs -rm -f -R /home/hadoop/outputs/*
 hadoop jar target/myWordCount.jar com.dsp.dsp_assignment_2.TestSteps
 output_dir=$(hadoop fs -ls /home/hadoop/outputs | awk '{printf $8}')
-hadoop fs -cat "${output_dir}"/*
+for f in $(hadoop fs -ls -C "$output_dir" | grep part)
+do
+  echo $f
+  hadoop fs -cat $f
+done
