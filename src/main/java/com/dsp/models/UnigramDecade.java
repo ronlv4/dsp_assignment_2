@@ -61,6 +61,6 @@ public class UnigramDecade implements WritableComparable<UnigramDecade> {
 
     @Override
     public String toString() {
-        return unigram + " " + decade;
+        return unigram + ":" + decade;
     }
 }

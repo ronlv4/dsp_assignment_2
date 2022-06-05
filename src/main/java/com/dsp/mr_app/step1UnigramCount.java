@@ -159,7 +159,8 @@ public class step1UnigramCount {
         args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
 //        args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
-
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        int done = job.waitForCompletion(true) ? 0 : 1;
+        if(done == 1)
+            System.exit(1);
     }
 }
