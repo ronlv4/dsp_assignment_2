@@ -9,4 +9,4 @@ hadoop fs -rm -R /home/hadoop/outputs
 hadoop fs -mkdir /home/hadoop/outputs
 hadoop jar target/myWordCount.jar com.dsp.dsp_assignment_2.TestSteps
 output_dir=`hadoop fs -ls /home/hadoop/outputs | awk '{printf $8}'`
-hadoop fs -cat ${output_dir}/part-r-00000
+hadoop fs -cat "${output_dir}"/part-r-00000

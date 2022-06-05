@@ -7,9 +7,9 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
@@ -101,6 +101,14 @@ public class step1UnigramCount {
                 context.write(new UnigramDecade(unigram, decade), count);
                 context.write(new UnigramDecade(new Text("*"), decade), count); // for counting total words per decade
             }
+        }
+    }
+
+    public static class UnigramPartitioner extends Partitioner<UnigramDecade, IntWritable> {
+
+        @Override
+        public int getPartition(UnigramDecade unigramDecade, IntWritable intWritable, int i) {
+            return (unigramDecade.getUnigram().toString().equals("*")) ? 0 : 1;
         }
     }
 
