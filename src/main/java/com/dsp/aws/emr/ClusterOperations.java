@@ -47,6 +47,46 @@ public class ClusterOperations {
         return "";
     }
 
+    public static String createClusterWithSteps(
+            EmrClient emr,
+            String keys,
+            String logUri,
+            int instanceCount,
+            StepConfig... stepConfigs) {
+        try {
+
+            JobFlowInstancesConfig instancesConfig = JobFlowInstancesConfig.builder()
+                    .ec2KeyName(keys)
+                    .instanceCount(instanceCount)
+                    .hadoopVersion("3.3.3")
+                    .keepJobFlowAliveWhenNoSteps(true)
+                    .masterInstanceType(InstanceType.M3_XLARGE.toString())
+                    .slaveInstanceType(InstanceType.M3_XLARGE.toString())
+                    .placement(PlacementType.builder().availabilityZone("us-east-1a").build())
+                    .build();
+
+
+            RunJobFlowRequest jobFlowRequest = RunJobFlowRequest.builder()
+                    .name("My Job Flow")
+                    .releaseLabel("emr-6.6.0")
+                    .logUri(logUri)
+                    .serviceRole("EMR_DefaultRole")
+                    .jobFlowRole("EMR_EC2_DefaultRole")
+                    .instances(instancesConfig)
+                    .steps(stepConfigs)
+                    .build();
+
+            RunJobFlowResponse response = emr.runJobFlow(jobFlowRequest);
+            return response.jobFlowId();
+        } catch (EmrException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+
+        return "";
+
+    }
+
     public static String createAppClusterWithStep(EmrClient emrClient,
                                                   String jar,
                                                   String myClass,
