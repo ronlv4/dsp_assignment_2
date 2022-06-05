@@ -1,7 +1,6 @@
 package com.dsp.mr_app;
 
 import com.dsp.models.BigramDecade;
-import com.dsp.models.BigramDecadeOccurrences;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -11,14 +10,13 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class step1BigramDecadeCount {
+public class step2BigramDecadeCount {
     /*
     step1BigramDecadeCount Input:
         Key: line number of lzo file
@@ -29,7 +27,7 @@ public class step1BigramDecadeCount {
         Value: occurrences of the bigram <w1 w2> in the decade
      */
 
-    public static final Logger logger = Logger.getLogger(step1BigramDecadeCount.class);
+    public static final Logger logger = Logger.getLogger(step2BigramDecadeCount.class);
     public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
 
@@ -96,10 +94,10 @@ public class step1BigramDecadeCount {
             logger.error("not place to store output path");
             System.exit(1);
         }
-        logger.info("Starting " + step1BigramDecadeCount.class.getName() + " map reduce app");
+        logger.info("Starting " + step2BigramDecadeCount.class.getName() + " map reduce app");
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
-        job.setJarByClass(step1BigramDecadeCount.class);
+        job.setJarByClass(step2BigramDecadeCount.class);
         job.setMapperClass(BigramMapper.class);
         job.setCombinerClass(IntSumReducer.class);
         job.setReducerClass(IntSumReducer.class);
