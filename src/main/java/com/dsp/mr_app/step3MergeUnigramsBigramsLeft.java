@@ -76,7 +76,7 @@ public class step3MergeUnigramsBigramsLeft {
 
 
     public static class MergeReducer extends Reducer<BigramDecade, Text, BigramDecade, Text> {
-        String[] currentTotal = {"0", "0"};
+        String[] currentTotal = {"1", "1"};
         int currentDecade = 0;
         String currentLeftWord = "";
         public void reduce(BigramDecade key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
@@ -90,11 +90,11 @@ public class step3MergeUnigramsBigramsLeft {
             }
             else {
                 if(currentDecade != key.getDecade().get()) {
-                    currentTotal[0] = "0";
+                    currentTotal[0] = "1";
                     currentDecade = key.getDecade().get();
                 }
                 if(!currentLeftWord.equals(key.getBigram().getFirst().toString())) {
-                    currentTotal[1] = "0";
+                    currentTotal[1] = "1";
                     currentLeftWord = key.getBigram().getFirst().toString();
                 }
                 String concated = String.format("%s,%s", val, String.join(",", currentTotal));

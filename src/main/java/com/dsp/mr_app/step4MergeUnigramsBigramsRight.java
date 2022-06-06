@@ -26,33 +26,6 @@ public class step4MergeUnigramsBigramsRight {
 
 
     public static class MergeMapper extends Mapper<Object, Text, ReverseBigramDecade, Text> {
-        private final HashMap<String, Integer> wordsPerDecade = new HashMap<>();
-
-        private Configuration conf;
-        private BufferedReader fis;
-
-        @Override
-        public void setup(Context context) throws IOException, InterruptedException {
-//            conf = context.getConfiguration();
-//            URI[] wordsPerDecade = Job.getInstance(conf).getCacheFiles();
-//            parseWordsPerDecade(new Path(wordsPerDecade[0].getPath()).getName());
-        }
-
-        private void parseWordsPerDecade(String fileName) {
-            try {
-                fis = new BufferedReader(new FileReader(fileName));
-                String line = null;
-                while ((line = fis.readLine()) != null) {
-                    int count = Integer.parseInt(line.split("\\t")[1]);
-                    String decade = line.split("\\t")[0].split(":")[1];
-                    wordsPerDecade.put(decade, count);
-                }
-            } catch (IOException ioe) {
-                System.err.println("Caught exception while parsing the cached file '"
-                        + StringUtils.stringifyException(ioe));
-            }
-        }
-
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             logger.info("got from record reader the line " + value);
             String[] keyValue = value.toString().split("\\t");
@@ -77,7 +50,7 @@ public class step4MergeUnigramsBigramsRight {
 
     public static class MergeReducer extends Reducer<ReverseBigramDecade, Text, ReverseBigramDecade, Text> {
 
-        String[] currentTotal = {"0", "0"};
+        String[] currentTotal = {"1", "1"};
 
         int currentDecade = 0;
         String currentRightWord = "";
@@ -94,11 +67,11 @@ public class step4MergeUnigramsBigramsRight {
             }
             else {
                 if(currentDecade != key.getDecade().get()) {
-                    currentTotal[0] = "0";
+                    currentTotal[0] = "1";
                     currentDecade = key.getDecade().get();
                 }
                 if(!currentRightWord.equals(key.getBigram().getSecond().toString())) {
-                    currentTotal[1] = "0";
+                    currentTotal[1] = "1";
                     currentRightWord = key.getBigram().getSecond().toString();
                 }
                 String concated = String.format("%s,%s", val, currentTotal[1]);
@@ -124,8 +97,8 @@ public class step4MergeUnigramsBigramsRight {
         job.setOutputValueClass(Text.class);
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileInputFormat.addInputPath(job, new Path(args[1]));
-
-        FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/outputs/output" + System.currentTimeMillis()));
+        args[1] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
         int done = job.waitForCompletion(true) ? 0 : 1;
         if(done == 1)
             System.exit(1);

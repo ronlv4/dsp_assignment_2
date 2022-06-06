@@ -130,7 +130,7 @@ public class step1UnigramCount {
 
     public static class UnigramDecadeReducer extends Reducer<UnigramDecade, IntWritable, UnigramDecade, Text> {
 
-        private int total = 0;
+        private int total = 1;
         private int currentDecade = 0;
 
         public void reduce(UnigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
@@ -145,7 +145,7 @@ public class step1UnigramCount {
             } else {
                 // This means we have a new decade without count
                 if(key.getDecade().get() != currentDecade){
-                    total = 0;
+                    total = 1;
                     currentDecade = key.getDecade().get();
                 }
                 logger.info("counted: " + sum);
