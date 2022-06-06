@@ -1,7 +1,7 @@
 package com.dsp.mr_app;
 
-import com.dsp.models.Bigram;
-import com.dsp.models.BigramDecade;
+import com.dsp.models.ReverseBigram;
+import com.dsp.models.ReverseBigramDecade;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -19,13 +19,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class step3MergeUnigramsBigrams {
+public class step4MergeUnigramsBigramsRight {
 
-    public static final Logger logger = Logger.getLogger(step2BigramDecadeCount.class);
+    public static final Logger logger = Logger.getLogger(step4MergeUnigramsBigramsRight.class);
     public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
 
-    public static class MergeMapper extends Mapper<Object, Text, BigramDecade, IntWritable> {
+    public static class MergeMapper extends Mapper<Object, Text, ReverseBigramDecade, Text> {
         private final HashMap<String, Integer> wordsPerDecade = new HashMap<>();
 
         private Configuration conf;
@@ -56,39 +56,52 @@ public class step3MergeUnigramsBigrams {
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             logger.info("got from record reader the line " + value);
             String[] keyValue = value.toString().split("\\t");
-            int val = Integer.parseInt(keyValue[1]);
+            String val =keyValue[1];
             String[] bigramOrUnigramDecade = keyValue[0].split(":");
             int decade = Integer.parseInt(bigramOrUnigramDecade[1]);
             String[] words = bigramOrUnigramDecade[0].split("\\s");
-            Bigram b;
+            ReverseBigram b;
             if(words.length > 1) {
-                b = new Bigram(new Text(words[0]), new Text(words[1]));
+                b = new ReverseBigram(new Text(words[0]), new Text(words[1]));
 
             }
             else {
-                b = new Bigram(new Text(words[0]), new Text("*"));
+                b = new ReverseBigram(new Text("*"), new Text(words[0]));
 
             }
-            BigramDecade newKey = new BigramDecade(b, new IntWritable(decade));
-            context.write(newKey, new IntWritable(val));
+            ReverseBigramDecade newKey = new ReverseBigramDecade(b, new IntWritable(decade));
+            context.write(newKey, new Text(val));
         }
     }
 
 
-    public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, Text> {
-        private int total = 0;
+    public static class MergeReducer extends Reducer<ReverseBigramDecade, Text, ReverseBigramDecade, Text> {
 
-        public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            int sum = 0;
+        String[] currentTotal = {"0", "0"};
+
+        int currentDecade = 0;
+        String currentRightWord = "";
+
+        public void reduce(ReverseBigramDecade key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             logger.info("starting to count occurrences for " + key);
-            for (IntWritable val : values) {
-                sum += val.get();
-            }
-            if(key.getBigram().getSecond().equals(new Text("*"))) {
-                total = sum;
+            Text val = values.iterator().next();
+            logger.info("value is " + val.toString());
+            if(key.getBigram().getFirst().equals(new Text("*"))) {
+                currentTotal[0] = val.toString().split(",")[0];
+                currentTotal[1] = val.toString().split(",")[1];
+                currentDecade = key.getDecade().get();
+                currentRightWord = key.getBigram().getSecond().toString();
             }
             else {
-                String concated = String.format("%d,%d", sum, total);
+                if(currentDecade != key.getDecade().get()) {
+                    currentTotal[0] = "0";
+                    currentDecade = key.getDecade().get();
+                }
+                if(!currentRightWord.equals(key.getBigram().getSecond().toString())) {
+                    currentTotal[1] = "0";
+                    currentRightWord = key.getBigram().getSecond().toString();
+                }
+                String concated = String.format("%s,%s", val, currentTotal[1]);
                 context.write(key, new Text(concated));
             }
         }
@@ -99,15 +112,15 @@ public class step3MergeUnigramsBigrams {
             logger.error("not place to store output path");
             System.exit(1);
         }
-        logger.info("Starting " + step3MergeUnigramsBigrams.class.getName() + " map reduce app");
+        logger.info("Starting " + step4MergeUnigramsBigramsRight.class.getName() + " map reduce app");
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
-        job.setJarByClass(step3MergeUnigramsBigrams.class);
+        job.setJarByClass(step4MergeUnigramsBigramsRight.class);
         job.setMapperClass(MergeMapper.class);
-        job.setReducerClass(IntSumReducer.class);
-        job.setMapOutputKeyClass(BigramDecade.class);
-        job.setMapOutputValueClass(IntWritable.class);
-        job.setOutputKeyClass(BigramDecade.class);
+        job.setReducerClass(MergeReducer.class);
+        job.setMapOutputKeyClass(ReverseBigramDecade.class);
+        job.setMapOutputValueClass(Text.class);
+        job.setOutputKeyClass(ReverseBigramDecade.class);
         job.setOutputValueClass(Text.class);
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileInputFormat.addInputPath(job, new Path(args[1]));

@@ -561,7 +561,7 @@ $0.0006	2002	5	5	4
 ﬁrmament	1999	1	1	1
 ﬁrmament	2000	3	3	2
 ﬁrmament	2001	2	2	2
-ﬁrmament	2003	5	5	2
+ﬁrmament	2003	5	2
 ﬁrmament	2004	4	4	2
 ﬁrmament	2005	10	10	7
 ﬁrmament	2006	21	20	15

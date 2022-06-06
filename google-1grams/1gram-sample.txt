@@ -1,0 +1,4 @@
+fissure	1995	2	2	2
+fissure	2002	3	3	3
+slow	1995	2	2	2
+big	2002	1	1	1

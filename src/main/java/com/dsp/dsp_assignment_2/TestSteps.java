@@ -12,7 +12,8 @@ public class TestSteps {
         String[] pipe = new String[2];
         step1UnigramCount.main(pipe);
         step2BigramDecadeCount.main(pipe);
-        step3MergeUnigramsBigrams.main(pipe);
+        step3MergeUnigramsBigramsLeft.main(pipe);
+        step4MergeUnigramsBigramsRight.main(pipe);
 //        step2SortBigramsDecadeByOccurrence.main(new String[]{"/home/hadoop/output1654066896913"});
 //        step2SortBigramsDecadeByOccurrence.main(pipe);
     }
