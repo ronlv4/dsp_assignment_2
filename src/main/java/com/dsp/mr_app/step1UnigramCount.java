@@ -95,6 +95,7 @@ public class step1UnigramCount {
                     year = Integer.parseInt(lineElements[1]);
                     count = new IntWritable(Integer.parseInt((lineElements[2])));
                 } catch (NumberFormatException ignored) {
+                    logger.error("failed to process line: " + unigramLine);
                     continue;
                 }
                 IntWritable decade = new IntWritable(year / 10);
@@ -177,7 +178,8 @@ public class step1UnigramCount {
 //        SequenceFileInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
 //        SequenceFileInputFormat.setInputPaths(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/1gram/data"));
 
-        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/1grams-sample.txt"));
+//        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/1grams-sample.txt"));
+        FileInputFormat.addInputPath(job, new Path("/home/hadoop/input/googlebooks-eng-all-1gram-20090715-0.csv"));
         args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
 //        args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
