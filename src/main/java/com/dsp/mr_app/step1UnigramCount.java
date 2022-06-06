@@ -73,8 +73,6 @@ public class step1UnigramCount {
 
         @Override
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            logger.info("key: " + key);
-            logger.info("value: " + value);
             String[] unigramLines = value.toString().split("\\R");
             Iterator<String> unigramItertor = Arrays.stream(unigramLines).iterator();
             String unigramLine;
@@ -95,6 +93,7 @@ public class step1UnigramCount {
                     year = Integer.parseInt(lineElements[1]);
                     count = new IntWritable(Integer.parseInt((lineElements[2])));
                 } catch (NumberFormatException ignored) {
+                    logger.error("failed to process line: " + unigramLine);
                     continue;
                 }
                 IntWritable decade = new IntWritable(year / 10);
@@ -125,12 +124,6 @@ public class step1UnigramCount {
             logger.info("counted: " + sum);
             result.set(sum);
             context.write(key, result);
-        }
-
-        @Override
-        protected void cleanup(Reducer<UnigramDecade, IntWritable, UnigramDecade, IntWritable>.Context context) throws IOException, InterruptedException {
-
-
         }
     }
 
