@@ -140,18 +140,18 @@ public class step1UnigramCount {
         job.setOutputValueClass(IntWritable.class);
 
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
-        job.addCacheFile(new Path("/home/hadoop/stop-words/eng-stopwords.txt").toUri());
-        job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
-//        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/eng-stopwords.txt"));
-//        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt"));
+//        job.addCacheFile(new Path("/home/hadoop/stop-words/eng-stopwords.txt").toUri());
+//        job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
+        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/eng-stopwords.txt"));
+        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt"));
 //        job.setInputFormatClass(SequenceFileInputFormat.class);
 //        SequenceFileInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
 //        SequenceFileInputFormat.setInputPaths(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/1gram/data"));
-
+        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-1grams/"));
 //        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/1grams-sample.txt"));
-        FileInputFormat.addInputPath(job, new Path("/home/hadoop/input/googlebooks-eng-all-1gram-20090715-0.csv"));
-        args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
-//        args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
+//        FileInputFormat.addInputPath(job, new Path("/home/hadoop/input/googlebooks-eng-all-1gram-20090715-0.csv"));
+//        args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
+        args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
 
         System.exit(job.waitForCompletion(true) ? 0 : 1);
