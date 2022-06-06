@@ -73,6 +73,8 @@ public class step1UnigramCount {
 
         @Override
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+            logger.info("key: " + key);
+            logger.info("value: " + value);
             String[] unigramLines = value.toString().split("\\R");
             Iterator<String> unigramItertor = Arrays.stream(unigramLines).iterator();
             String unigramLine;
@@ -112,7 +114,7 @@ public class step1UnigramCount {
         }
     }
 
-    public static class UnigramDecadeReducer extends Reducer<UnigramDecade, IntWritable, UnigramDecade, IntWritable> {
+    public static class UnigramDecadeCombiner extends Reducer<UnigramDecade, IntWritable, UnigramDecade, IntWritable> {
         private IntWritable result = new IntWritable();
 
         public void reduce(UnigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
@@ -127,17 +129,45 @@ public class step1UnigramCount {
         }
     }
 
+    public static class UnigramDecadeReducer extends Reducer<UnigramDecade, IntWritable, UnigramDecade, Text> {
+
+        private int total = 0;
+        private int currentDecade = 0;
+
+        public void reduce(UnigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+            logger.info("starting to count occurrences for " + key);
+            int sum = 0;
+            for (IntWritable val : values) {
+                sum += val.get();
+            }
+            if (new Text("*").equals(key.getUnigram().getUnigram())) {
+                total = sum;
+                currentDecade = key.getDecade().get();
+            } else {
+                // This means we have a new decade without count
+                if(key.getDecade().get() != currentDecade){
+                    total = 0;
+                    currentDecade = key.getDecade().get();
+                }
+                logger.info("counted: " + sum);
+                context.write(key, new Text(String.format("%d,%d", total, sum)));
+            }
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step1UnigramCount.class);
         job.setMapperClass(UnigramMapper.class);
-        job.setPartitionerClass(UnigramPartitioner.class);
-        job.setCombinerClass(UnigramDecadeReducer.class);
+        //job.setPartitionerClass(UnigramPartitioner.class);
+        job.setCombinerClass(UnigramDecadeCombiner.class);
         job.setReducerClass(UnigramDecadeReducer.class);
-        job.setNumReduceTasks(2);
+        //job.setNumReduceTasks(2);
+        job.setMapOutputKeyClass(UnigramDecade.class);
+        job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(UnigramDecade.class);
-        job.setOutputValueClass(IntWritable.class);
+        job.setOutputValueClass(Text.class);
 
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
         job.addCacheFile(new Path("/home/hadoop/stop-words/eng-stopwords.txt").toUri());
@@ -153,7 +183,8 @@ public class step1UnigramCount {
         args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
 //        args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
-
-        System.exit(job.waitForCompletion(true) ? 0 : 1);
+        int done = job.waitForCompletion(true) ? 0 : 1;
+        if (done == 1)
+            System.exit(1);
     }
 }

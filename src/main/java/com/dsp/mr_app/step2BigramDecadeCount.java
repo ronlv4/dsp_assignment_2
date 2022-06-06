@@ -116,9 +116,9 @@ public class step2BigramDecadeCount {
                 IntWritable decade = new IntWritable(year / 10);
                 logger.info("writing bigram '" + bigram + "', decade: " + decade + ", count: " + count);
                 context.write(new BigramDecade(bigram, decade), count);
-                // Set second to *
-                Bigram bigram1 = new Bigram(new Text(lineElements[0].split("\\s")[0]), new Text("*"));
-                context.write(new BigramDecade(bigram1, decade), count);
+//                // Set second to *
+//                Bigram bigram1 = new Bigram(new Text(lineElements[0].split("\\s")[0]), new Text("*"));
+//                context.write(new BigramDecade(bigram1, decade), count);
             }
         }
     }
@@ -149,32 +149,32 @@ public class step2BigramDecadeCount {
     }
 
 
-    public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, Text> {
-        /*
-        Reducer Input:
-            same as mapper output
-
-        Reducer Output:
-            Key: <w1 w2:decade>
-            Value: occurrences of thr bigram <w1 w2> in the decade
-         */
-        private int total = 0;
-
-        public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            int sum = 0;
-            logger.info("starting to count occurrences for " + key);
-            for (IntWritable val : values) {
-                sum += val.get();
-            }
-            if(key.getBigram().getSecond().equals(new Text("*"))) {
-                total = sum;
-            }
-            else {
-                String concated = String.format("%d,%d", sum, total);
-                context.write(key, new Text(concated));
-            }
-        }
-    }
+//    public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, Text> {
+//        /*
+//        Reducer Input:
+//            same as mapper output
+//
+//        Reducer Output:
+//            Key: <w1 w2:decade>
+//            Value: occurrences of thr bigram <w1 w2> in the decade
+//         */
+//        private int total = 0;
+//
+//        public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
+//            int sum = 0;
+//            logger.info("starting to count occurrences for " + key);
+//            for (IntWritable val : values) {
+//                sum += val.get();
+//            }
+//            if(key.getBigram().getSecond().equals(new Text("*"))) {
+//                total = sum;
+//            }
+//            else {
+//                String concated = String.format("%d,%d", sum, total);
+//                context.write(key, new Text(concated));
+//            }
+//        }
+//    }
 
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
         if (args.length < 1) {
@@ -190,19 +190,20 @@ public class step2BigramDecadeCount {
         job.setJarByClass(step2BigramDecadeCount.class);
         job.setMapperClass(BigramMapper.class);
         job.setCombinerClass(IntSumCombiner.class);
-        job.setReducerClass(IntSumReducer.class);
+        job.setReducerClass(IntSumCombiner.class);
         job.setMapOutputKeyClass(BigramDecade.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(BigramDecade.class);
-        job.setOutputValueClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
         //FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
 //        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-2grams/"));
         FileInputFormat.addInputPath(job, new Path("/home/hadoop/2grams-sample.txt"));
         //FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
-        args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
+        args[1] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
 //        args[0] = BUCKET_HOME_SCHEME + "output" + System.currentTimeMillis();
-        FileOutputFormat.setOutputPath(job, new Path(args[0]));
-        job.waitForCompletion(true);
-        logger.info("Finished job 1 Successfully\n");
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        int done = job.waitForCompletion(true) ? 0 : 1;
+        if(done == 1)
+            System.exit(1);
     }
 }

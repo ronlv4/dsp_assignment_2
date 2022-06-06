@@ -10,17 +10,17 @@ import org.apache.hadoop.io.Text;
 import org.apache.log4j.Logger;
 
 
-public class Bigram implements WritableComparable<Bigram> {
+public class ReverseBigram implements WritableComparable<ReverseBigram> {
     private Text first;
     private Text second;
 
-    public static final Logger logger = Logger.getLogger(Bigram.class);
+    public static final Logger logger = Logger.getLogger(ReverseBigram.class);
 
-    public Bigram() {
+    public ReverseBigram() {
         set(new Text(), new Text());
     }
 
-    public Bigram(Text first, Text second) {
+    public ReverseBigram(Text first, Text second) {
         set(first, second);
     }
 
@@ -29,9 +29,9 @@ public class Bigram implements WritableComparable<Bigram> {
         this.second = second;
     }
 
-    public static Bigram fromString(String bigram){ // w1 w2:decade
+    public static ReverseBigram fromString(String bigram){ // w1 w2:decade
         try {
-            return new Bigram(new Text(bigram.split(" ")[0]), new Text(bigram.split(" ")[1]));
+            return new ReverseBigram(new Text(bigram.split(" ")[0]), new Text(bigram.split(" ")[1]));
         }catch (Exception e){
             logger.error("unable to create a bigram  out of " + bigram);
             throw e;
@@ -58,15 +58,15 @@ public class Bigram implements WritableComparable<Bigram> {
         second.readFields(dataInput);
     }
 
-    public int compareTo(Bigram o) {
+    public int compareTo(ReverseBigram o) {
         /*
-        Primary sort by first
-        Secondary sort by second (* is smallest)
+        Primary sort by second
+        Secondary sort by first (* is smallest)
          */
-        return first.compareTo(o.getFirst()) != 0 ? first.compareTo(o.getFirst()) :
-                (second.equals(new Text("*")) && !o.getSecond().equals(new Text("*"))) ? -1 :
-                        (!second.equals(new Text("*")) && o.getSecond().equals(new Text("*"))) ? 1 :
-                                second.compareTo(o.getSecond());
+        return second.compareTo(o.getSecond()) != 0 ? second.compareTo(o.getSecond()) :
+                (first.equals(new Text("*")) && !o.getFirst().equals(new Text("*"))) ? -1 :
+                        (!first.equals(new Text("*")) && o.getFirst().equals(new Text("*"))) ? 1 :
+                                first.compareTo(o.getFirst());
     }
     @Override
     public String toString(){
