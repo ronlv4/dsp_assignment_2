@@ -11,6 +11,7 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
@@ -164,6 +165,7 @@ public class step2BigramDecadeCount {
         job.setOutputValueClass(IntWritable.class);
 
         job.addCacheFile(new Path(args[PathEnum.STOP_WORDS.value]).toUri());
+        job.setInputFormatClass(SequenceFileInputFormat.class);
         FileInputFormat.addInputPath(job, new Path(args[PathEnum.BIGRAMS.value]));
         FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.STEP_2_OUTPUT.value]));
         int done = job.waitForCompletion(true) ? 0 : 1;

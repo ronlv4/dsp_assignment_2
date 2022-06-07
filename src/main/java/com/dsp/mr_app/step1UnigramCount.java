@@ -12,12 +12,14 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.SequenceInputStream;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -171,6 +173,8 @@ public class step1UnigramCount {
 
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
         job.addCacheFile(new Path(args[PathEnum.STOP_WORDS.value]).toUri());
+
+        job.setInputFormatClass(SequenceFileInputFormat.class);
         FileInputFormat.addInputPath(job, new Path(args[PathEnum.UNIGRAMS.value]));
         FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.STEP_1_OUTPUT.value]));
         int done = job.waitForCompletion(true) ? 0 : 1;
