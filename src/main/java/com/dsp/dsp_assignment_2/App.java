@@ -46,7 +46,7 @@ public class App {
             pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1grams/1grams-sample.txt";
             pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams/2grams-sample.txt";
         }
-        StepsOperations.addNewStep(emr,"j-235XB4VVF0HYK", BUCKET_HOME_SCHEME + "/myWordCount.jar", "com.dsp.mr_app.TestSteps", pipe, "step1");
+        StepsOperations.addNewStep(emr,"j-235XB4VVF0HYK", BUCKET_HOME_SCHEME + "myWordCount.jar", "com.dsp.mr_app.TestSteps", pipe, "step1");
         System.exit(0);
 
 
