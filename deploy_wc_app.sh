@@ -1,7 +1,6 @@
 #!/bin/bash -xe
 
-
-mvn clean
+create_step_jars.sh
 mvn package
 ###aws s3 cp target/myWordCount.jar s3://dsp-assignment-2/
 hadoop fs -rm -f -R /home/hadoop/outputs/*
