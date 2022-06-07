@@ -14,8 +14,8 @@ public class TestSteps {
         String[] pipe = new String[10];
         pipe[PathEnum.BASE_PATH.value] = "/home/hadoop/";
         pipe[PathEnum.STOP_WORDS.value] = "/home/hadoop/stop-words/eng-stopwords.txt";
-        pipe[PathEnum.UNIGRAMS.value] = "/home/hadoop/google-1grams/1grams-sample.txt";
-        pipe[PathEnum.BIGRAMS.value] = "/home/hadoop/2grams-sample.txt";
+        pipe[PathEnum.UNIGRAMS.value] = "/home/hadoop/1grams/1grams-sample.txt";
+        pipe[PathEnum.BIGRAMS.value] = "/home/hadoop/2grams/2grams-sample.txt";
 
         pipe[PathEnum.STEP_1_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
         pipe[PathEnum.STEP_2_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
