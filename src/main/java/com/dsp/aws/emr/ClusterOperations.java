@@ -29,7 +29,7 @@ public class ClusterOperations {
                     .keepJobFlowAliveWhenNoSteps(true)
                     .masterInstanceType(InstanceType.M3_XLARGE.toString())
                     .slaveInstanceType(InstanceType.M3_XLARGE.toString())
-                    .placement(PlacementType.builder().availabilityZone("us-east-1a").build())
+                    .placement(PlacementType.builder().availabilityZone("us-east-1d").build())
                     .build();
 
 
@@ -67,7 +67,7 @@ public class ClusterOperations {
                     .keepJobFlowAliveWhenNoSteps(true)
                     .masterInstanceType(InstanceType.M3_XLARGE.toString())
                     .slaveInstanceType(InstanceType.M3_XLARGE.toString())
-                    .placement(PlacementType.builder().availabilityZone("us-east-1a").build())
+                    .placement(PlacementType.builder().availabilityZone("us-east-1c").build())
                     .build();
 
 
