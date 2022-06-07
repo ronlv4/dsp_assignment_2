@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class step1UnigramCount {
 
@@ -55,6 +56,7 @@ public class step1UnigramCount {
                     String patternsFileName = patternsPath.getName().toString();
                     parseSkipFile(patternsFileName);
                 }
+                patternsToSkip = caseSensitive ? patternsToSkip : patternsToSkip.stream().map(String::toLowerCase).collect(Collectors.toSet());
             }
         }
 
