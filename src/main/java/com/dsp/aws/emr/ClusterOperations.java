@@ -29,7 +29,7 @@ public class ClusterOperations {
                     .keepJobFlowAliveWhenNoSteps(true)
                     .masterInstanceType(InstanceType.M3_XLARGE.toString())
                     .slaveInstanceType(InstanceType.M3_XLARGE.toString())
-                    .placement(PlacementType.builder().availabilityZone("us-east-1d").build())
+                    .placement(PlacementType.builder().availabilityZone("us-east-1a").build())
                     .build();
 
 
@@ -65,9 +65,9 @@ public class ClusterOperations {
                     .instanceCount(instanceCount)
                     .hadoopVersion("3.3.3")
                     .keepJobFlowAliveWhenNoSteps(true)
-                    .masterInstanceType(InstanceType.M3_XLARGE.toString())
-                    .slaveInstanceType(InstanceType.M3_XLARGE.toString())
-                    .placement(PlacementType.builder().availabilityZone("us-east-1c").build())
+                    .masterInstanceType(InstanceType.M4_XLARGE.toString())
+                    .slaveInstanceType(InstanceType.M4_XLARGE.toString())
+                    .placement(PlacementType.builder().availabilityZone("us-east-1a").build())
                     .build();
 
 

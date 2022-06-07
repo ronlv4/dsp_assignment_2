@@ -11,7 +11,7 @@ public class App {
     public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2-shir/";
     public static final Region REGION = Region.US_EAST_1;
     public static final String KEYS = "dist1";
-    public static final int INSTANCE_COUNT = 3;
+    public static final int INSTANCE_COUNT = 8;
 
     public static void main(String[] args) {
 
