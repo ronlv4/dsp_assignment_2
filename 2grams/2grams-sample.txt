@@ -1,3 +1,0 @@
-slow fissure	1995	2	2	2
-fissure slow	1995	2	2	2
-big fissure	2002	1	1	1
