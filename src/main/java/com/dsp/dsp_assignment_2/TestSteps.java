@@ -21,7 +21,7 @@ public class TestSteps {
         pipe[PathEnum.STEP_2_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
         pipe[PathEnum.STEP_3_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
         pipe[PathEnum.STEP_4_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_5_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
+        pipe[PathEnum.STEP_5_OUTPUT.value] = "/home/hadoop/" + "outputs/output-final" + UUID.randomUUID();
 
         step1UnigramCount.main(pipe);
         step2BigramDecadeCount.main(pipe);

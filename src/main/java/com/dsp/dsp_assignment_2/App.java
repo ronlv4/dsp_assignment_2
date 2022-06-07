@@ -52,7 +52,7 @@ public class App {
         pipe[PathEnum.STEP_2_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
         pipe[PathEnum.STEP_3_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
         pipe[PathEnum.STEP_4_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_5_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
+        pipe[PathEnum.STEP_5_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-final" + UUID.randomUUID();
 
         if (lang.equals("heb")){
             pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "heb-stopwords.txt";
