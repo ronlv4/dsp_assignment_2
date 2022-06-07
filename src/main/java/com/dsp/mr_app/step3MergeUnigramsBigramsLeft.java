@@ -9,50 +9,19 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
 
 public class step3MergeUnigramsBigramsLeft {
 
     public static final Logger logger = Logger.getLogger(step3MergeUnigramsBigramsLeft.class);
-    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
 
     public static class MergeMapper extends Mapper<Object, Text, BigramDecade, Text> {
-        private final HashMap<String, Integer> wordsPerDecade = new HashMap<>();
-
-        private Configuration conf;
-        private BufferedReader fis;
-
-        @Override
-        public void setup(Context context) throws IOException, InterruptedException {
-//            conf = context.getConfiguration();
-//            URI[] wordsPerDecade = Job.getInstance(conf).getCacheFiles();
-//            parseWordsPerDecade(new Path(wordsPerDecade[0].getPath()).getName());
-        }
-
-        private void parseWordsPerDecade(String fileName) {
-            try {
-                fis = new BufferedReader(new FileReader(fileName));
-                String line = null;
-                while ((line = fis.readLine()) != null) {
-                    int count = Integer.parseInt(line.split("\\t")[1]);
-                    String decade = line.split("\\t")[0].split(":")[1];
-                    wordsPerDecade.put(decade, count);
-                }
-            } catch (IOException ioe) {
-                System.err.println("Caught exception while parsing the cached file '"
-                        + StringUtils.stringifyException(ioe));
-            }
-        }
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
             logger.info("got from record reader the line " + value);
@@ -72,6 +41,14 @@ public class step3MergeUnigramsBigramsLeft {
             }
             BigramDecade newKey = new BigramDecade(b, new IntWritable(decade));
             context.write(newKey, new Text(val));
+        }
+    }
+
+    public static class MergePartitioner extends Partitioner<BigramDecade, Text> {
+
+        @Override
+        public int getPartition(BigramDecade bigramDecade, Text text, int numPartitions) {
+            return bigramDecade.getBigram().getFirst().toString().hashCode() % numPartitions;
         }
     }
 
@@ -114,6 +91,7 @@ public class step3MergeUnigramsBigramsLeft {
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step3MergeUnigramsBigramsLeft.class);
         job.setMapperClass(MergeMapper.class);
+        job.setPartitionerClass(MergePartitioner.class);
         job.setReducerClass(MergeReducer.class);
         job.setMapOutputKeyClass(BigramDecade.class);
         job.setMapOutputValueClass(Text.class);

@@ -15,7 +15,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -108,14 +107,6 @@ public class step1UnigramCount {
         }
     }
 
-    public static class UnigramPartitioner extends Partitioner<UnigramDecade, IntWritable> {
-
-        @Override
-        public int getPartition(UnigramDecade unigramDecade, IntWritable intWritable, int i) {
-            return (unigramDecade.getUnigram().toString().equals("*")) ? 1 : 0;
-        }
-    }
-
     public static class UnigramDecadeCombiner extends Reducer<UnigramDecade, IntWritable, UnigramDecade, IntWritable> {
         private IntWritable result = new IntWritable();
 
@@ -128,6 +119,14 @@ public class step1UnigramCount {
             logger.info("counted: " + sum);
             result.set(sum);
             context.write(key, result);
+        }
+    }
+
+    public static class UnigramPartitioner extends Partitioner<UnigramDecade, IntWritable> {
+
+        @Override
+        public int getPartition(UnigramDecade unigramDecade, IntWritable intWritable, int i) {
+            return unigramDecade.getDecade().get() % i;
         }
     }
 
@@ -162,10 +161,9 @@ public class step1UnigramCount {
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step1UnigramCount.class);
         job.setMapperClass(UnigramMapper.class);
-        //job.setPartitionerClass(UnigramPartitioner.class);
+        job.setPartitionerClass(UnigramPartitioner.class);
         job.setCombinerClass(UnigramDecadeCombiner.class);
         job.setReducerClass(UnigramDecadeReducer.class);
-        //job.setNumReduceTasks(2);
         job.setMapOutputKeyClass(UnigramDecade.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(UnigramDecade.class);

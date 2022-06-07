@@ -9,21 +9,16 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
 
 public class step4MergeUnigramsBigramsRight {
 
     public static final Logger logger = Logger.getLogger(step4MergeUnigramsBigramsRight.class);
-    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
 
     public static class MergeMapper extends Mapper<Object, Text, ReverseBigramDecade, Text> {
@@ -45,6 +40,13 @@ public class step4MergeUnigramsBigramsRight {
             }
             ReverseBigramDecade newKey = new ReverseBigramDecade(b, new IntWritable(decade));
             context.write(newKey, new Text(val));
+        }
+    }
+
+    public static class ReverseMergePartitioner extends Partitioner<ReverseBigramDecade, Text> {
+        @Override
+        public int getPartition(ReverseBigramDecade reverseBigramDecade, Text text, int numPartitions) {
+            return reverseBigramDecade.getBigram().getSecond().toString().hashCode() % numPartitions;
         }
     }
 
@@ -91,6 +93,7 @@ public class step4MergeUnigramsBigramsRight {
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step4MergeUnigramsBigramsRight.class);
         job.setMapperClass(MergeMapper.class);
+        job.setPartitionerClass(ReverseMergePartitioner.class);
         job.setReducerClass(MergeReducer.class);
         job.setMapOutputKeyClass(ReverseBigramDecade.class);
         job.setMapOutputValueClass(Text.class);

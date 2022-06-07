@@ -10,18 +10,13 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
 public class step5CalculateLogLikelihood {
 
     public static final Logger logger = Logger.getLogger(step5CalculateLogLikelihood.class);
-    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
 
     public static class LogMapper extends Mapper<Object, Text, DecadeValue, Text> {
@@ -95,6 +90,7 @@ public class step5CalculateLogLikelihood {
         job.setJarByClass(step5CalculateLogLikelihood.class);
         job.setMapperClass(LogMapper.class);
         job.setReducerClass(LogReducer.class);
+        job.setNumReduceTasks(1);
         job.setMapOutputKeyClass(DecadeValue.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);

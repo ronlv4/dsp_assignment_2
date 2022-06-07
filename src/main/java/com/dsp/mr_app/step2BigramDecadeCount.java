@@ -14,7 +14,6 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -37,7 +36,6 @@ public class step2BigramDecadeCount {
      */
 
     public static final Logger logger = Logger.getLogger(step2BigramDecadeCount.class);
-    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
 
     public static class BigramMapper extends Mapper<Object, Text, BigramDecade, IntWritable> {
@@ -119,15 +117,11 @@ public class step2BigramDecadeCount {
                 IntWritable decade = new IntWritable(year / 10);
                 logger.info("writing bigram '" + bigram + "', decade: " + decade + ", count: " + count);
                 context.write(new BigramDecade(bigram, decade), count);
-//                // Set second to *
-//                Bigram bigram1 = new Bigram(new Text(lineElements[0].split("\\s")[0]), new Text("*"));
-//                context.write(new BigramDecade(bigram1, decade), count);
             }
         }
     }
 
-
-    public static class IntSumCombiner extends Reducer<BigramDecade, IntWritable, BigramDecade, IntWritable> {
+    public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, IntWritable> {
         /*
         Reducer Input:
             same as mapper output
@@ -151,34 +145,6 @@ public class step2BigramDecadeCount {
         }
     }
 
-
-//    public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, Text> {
-//        /*
-//        Reducer Input:
-//            same as mapper output
-//
-//        Reducer Output:
-//            Key: <w1 w2:decade>
-//            Value: occurrences of thr bigram <w1 w2> in the decade
-//         */
-//        private int total = 0;
-//
-//        public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-//            int sum = 0;
-//            logger.info("starting to count occurrences for " + key);
-//            for (IntWritable val : values) {
-//                sum += val.get();
-//            }
-//            if(key.getBigram().getSecond().equals(new Text("*"))) {
-//                total = sum;
-//            }
-//            else {
-//                String concated = String.format("%d,%d", sum, total);
-//                context.write(key, new Text(concated));
-//            }
-//        }
-//    }
-
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
         if (args.length < 1) {
             logger.error("not place to store output path");
@@ -190,8 +156,8 @@ public class step2BigramDecadeCount {
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
         job.setJarByClass(step2BigramDecadeCount.class);
         job.setMapperClass(BigramMapper.class);
-        job.setCombinerClass(IntSumCombiner.class);
-        job.setReducerClass(IntSumCombiner.class);
+        job.setCombinerClass(IntSumReducer.class);
+        job.setReducerClass(IntSumReducer.class);
         job.setMapOutputKeyClass(BigramDecade.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(BigramDecade.class);
