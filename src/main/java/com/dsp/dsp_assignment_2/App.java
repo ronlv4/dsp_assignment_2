@@ -2,7 +2,9 @@ package com.dsp.dsp_assignment_2;
 
 import com.dsp.aws.emr.ClusterOperations;
 import com.dsp.aws.emr.StepsOperations;
+import com.dsp.mr_app.step1UnigramCount;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.emr.EmrClient;
 import software.amazon.awssdk.services.emr.model.*;
@@ -14,6 +16,8 @@ public class App {
     public static final Region REGION = Region.US_EAST_1;
     public static final String KEYS = "linux_laptop";
     public static final int INSTANCE_COUNT = 3;
+
+    public static final Logger logger = Logger.getLogger(App.class);
 
     public static void main(String[] args) {
 
@@ -41,7 +45,7 @@ public class App {
 //        System.exit(0); // END OF TESTING SECTION
         // Real App:
 
-        System.out.println("args" + Arrays.toString(args));
+        logger.debug("args" + Arrays.toString(args));
 
         if (args.length > 2 || args.length < 1) { //TODO: when running in intelliJ args[0] is not path to program
             String usage = "Usage: <language> [case_sensitive=false]";
@@ -51,7 +55,7 @@ public class App {
         args[1] = StringUtils.isEmpty(args[1]) ? "false" : "true";
         String[] stepsArgs = new String[args.length + 1];
         System.arraycopy(args, 0, stepsArgs, 0, args.length);
-        System.out.println("stepsArgs" + Arrays.toString(stepsArgs));
+        logger.debug("stepsArgs" + Arrays.toString(stepsArgs));
 
         System.exit(0);
 
