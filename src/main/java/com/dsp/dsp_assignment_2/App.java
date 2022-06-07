@@ -2,9 +2,12 @@ package com.dsp.dsp_assignment_2;
 
 import com.dsp.aws.emr.ClusterOperations;
 import com.dsp.aws.emr.StepsOperations;
+import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.emr.EmrClient;
 import software.amazon.awssdk.services.emr.model.*;
+
+import java.util.Arrays;
 
 public class App {
     public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
@@ -35,14 +38,22 @@ public class App {
 //        );
 
 
-        System.exit(0); // END OF TESTING SECTION
+//        System.exit(0); // END OF TESTING SECTION
         // Real App:
 
-        if (args.length > 3 || args.length < 2) {
-            String usage = "Usage: <language> <case_sensitive>";
+        System.out.println("args" + Arrays.toString(args));
+
+        if (args.length > 2 || args.length < 1) { //TODO: when running in intelliJ args[0] is not path to program
+            String usage = "Usage: <language> [case_sensitive=false]";
             System.out.println(usage);
             System.exit(1);
         }
+        args[1] = StringUtils.isEmpty(args[1]) ? "false" : "true";
+        String[] stepsArgs = new String[args.length + 1];
+        System.arraycopy(args, 0, stepsArgs, 0, args.length);
+        System.out.println("stepsArgs" + Arrays.toString(stepsArgs));
+
+        System.exit(0);
 
         HadoopJarStepConfig step1 = HadoopJarStepConfig.builder()
                 .jar(BUCKET_HOME_SCHEME + "step1.jar")
