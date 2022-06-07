@@ -17,11 +17,11 @@ public class TestSteps {
         pipe[PathEnum.UNIGRAMS.value] = "/home/hadoop/1grams/1grams-sample.txt";
         pipe[PathEnum.BIGRAMS.value] = "/home/hadoop/2grams/2grams-sample.txt";
 
-        pipe[PathEnum.STEP_1_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_2_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_3_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_4_OUTPUT.value] = "/home/hadoop/" + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_5_OUTPUT.value] = "/home/hadoop/" + "outputs/output-final" + UUID.randomUUID();
+        pipe[PathEnum.STEP_1_OUTPUT.value] = "/home/hadoop/" + "outputs/output-step1" + UUID.randomUUID();
+        pipe[PathEnum.STEP_2_OUTPUT.value] = "/home/hadoop/" + "outputs/output-step2" + UUID.randomUUID();
+        pipe[PathEnum.STEP_3_OUTPUT.value] = "/home/hadoop/" + "outputs/output-step3" + UUID.randomUUID();
+        pipe[PathEnum.STEP_4_OUTPUT.value] = "/home/hadoop/" + "outputs/output-step4" + UUID.randomUUID();
+        pipe[PathEnum.STEP_5_OUTPUT.value] = "/home/hadoop/" + "outputs/output-step5-final" + UUID.randomUUID();
 
         step1UnigramCount.main(pipe);
         step2BigramDecadeCount.main(pipe);

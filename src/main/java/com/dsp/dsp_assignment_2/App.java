@@ -48,11 +48,11 @@ public class App {
         String[] pipe = new String[9];
         String lang = args[0];
         pipe[PathEnum.BASE_PATH.value-1] = BUCKET_HOME_SCHEME;
-        pipe[PathEnum.STEP_1_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_2_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_3_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_4_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
-        pipe[PathEnum.STEP_5_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-final" + UUID.randomUUID();
+        pipe[PathEnum.STEP_1_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step1" + UUID.randomUUID();
+        pipe[PathEnum.STEP_2_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step2" + UUID.randomUUID();
+        pipe[PathEnum.STEP_3_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step3" + UUID.randomUUID();
+        pipe[PathEnum.STEP_4_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step4" + UUID.randomUUID();
+        pipe[PathEnum.STEP_5_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step5-final" + UUID.randomUUID();
 
         if (lang.equals("heb")){
             pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "heb-stopwords.txt";
