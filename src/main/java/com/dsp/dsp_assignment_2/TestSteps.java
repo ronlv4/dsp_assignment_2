@@ -13,7 +13,7 @@ public class TestSteps {
 
     public static void main(String[] args) throws Exception {
 
-        logger.debug("args: " + Arrays.toString(args));
+        logger.debug("args in: " + Arrays.toString(args));
 
         if (args.length > 3 || args.length < 2) {
             String usage = "Usage: <language> [case_sensitive=false]";
@@ -21,6 +21,7 @@ public class TestSteps {
             System.exit(1);
         }
         args[2] = StringUtils.isEmpty(args[1]) ? "false" : "true";
+        logger.debug("args out: " + Arrays.toString(args));
 
         try {
             step1UnigramCount.main(args);
