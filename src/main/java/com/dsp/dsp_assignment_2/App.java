@@ -9,9 +9,9 @@ import software.amazon.awssdk.services.emr.model.*;
 import java.util.UUID;
 
 public class App {
-    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2-shir/";
+    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
     public static final Region REGION = Region.US_EAST_1;
-    public static final String KEYS = "dist1";
+    public static final String KEYS = "linux_laptop";
     public static final int INSTANCE_COUNT = 8;
 
     public static void main(String[] args) {
@@ -33,20 +33,20 @@ public class App {
         pipe[PathEnum.STEP_5_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step5-final" + UUID.randomUUID();
 
         if (lang.equals("heb") || lang1.equals("heb")){
-            pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "heb-stopwords.txt";
+            pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt";
 //            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data";
 //            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data";
             pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1grams/1grams-sample.txt";
             pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams/2grams-sample.txt";
         }
         else {
-            pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "eng-stopwords.txt";
+            pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "stop-words/eng-stopwords.txt";
 //            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/1gram/data";
 //            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/2gram/data";
             pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1grams/1grams-sample.txt";
             pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams/2grams-sample.txt";
         }
-        StepsOperations.addNewStep(emr,"j-235XB4VVF0HYK", BUCKET_HOME_SCHEME + "/myWordCount.jar", "com.dsp.mr_app.step1UnigramCount", pipe, "step1");
+        StepsOperations.addNewStep(emr,"j-235XB4VVF0HYK", BUCKET_HOME_SCHEME + "/myWordCount.jar", "com.dsp.mr_app.TestSteps", pipe, "step1");
         System.exit(0);
 
 
