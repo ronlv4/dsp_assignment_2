@@ -1,5 +1,6 @@
 package com.dsp.mr_app;
 
+import com.dsp.dsp_assignment_2.PathEnum;
 import com.dsp.models.ReverseBigram;
 import com.dsp.models.ReverseBigramDecade;
 import org.apache.hadoop.conf.Configuration;
@@ -95,10 +96,11 @@ public class step4MergeUnigramsBigramsRight {
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(ReverseBigramDecade.class);
         job.setOutputValueClass(Text.class);
-        FileInputFormat.addInputPath(job, new Path(args[0]));
-        FileInputFormat.addInputPath(job, new Path(args[1]));
-        args[1] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        FileInputFormat.addInputPath(job, new Path(args[PathEnum.STEP_1_OUTPUT.value]));
+        FileInputFormat.addInputPath(job, new Path(args[PathEnum.STEP_3_OUTPUT.value]));
+        args[PathEnum.STEP_4_OUTPUT.value] = args[PathEnum.BASE_PATH.value] + "outputs/output" + System.currentTimeMillis();
+        FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.STEP_4_OUTPUT.value]));
         int done = job.waitForCompletion(true) ? 0 : 1;
         if(done == 1)
             System.exit(1);

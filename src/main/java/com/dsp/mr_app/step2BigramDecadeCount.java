@@ -1,5 +1,6 @@
 package com.dsp.mr_app;
 
+import com.dsp.dsp_assignment_2.PathEnum;
 import com.dsp.models.Bigram;
 import com.dsp.models.BigramDecade;
 import org.apache.hadoop.conf.Configuration;
@@ -185,8 +186,6 @@ public class step2BigramDecadeCount {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
-        job.addCacheFile(new Path("/home/hadoop/stop-words/eng-stopwords.txt").toUri());
-        job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
         job.setJarByClass(step2BigramDecadeCount.class);
         job.setMapperClass(BigramMapper.class);
         job.setCombinerClass(IntSumCombiner.class);
@@ -195,13 +194,11 @@ public class step2BigramDecadeCount {
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(BigramDecade.class);
         job.setOutputValueClass(IntWritable.class);
-        //FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
-//        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-2grams/"));
-        FileInputFormat.addInputPath(job, new Path("/home/hadoop/2grams-sample.txt"));
-        //FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
-        args[1] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
-//        args[0] = BUCKET_HOME_SCHEME + "output" + System.currentTimeMillis();
-        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        job.addCacheFile(new Path(args[PathEnum.STOP_WORDS.value]).toUri());
+        FileInputFormat.addInputPath(job, new Path(args[PathEnum.BIGRAMS.value]));
+        args[PathEnum.STEP_2_OUTPUT.value] = args[PathEnum.BASE_PATH.value] + "outputs/output" + System.currentTimeMillis();
+        FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.STEP_2_OUTPUT.value]));
         int done = job.waitForCompletion(true) ? 0 : 1;
         if(done == 1)
             System.exit(1);

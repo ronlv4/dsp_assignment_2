@@ -9,10 +9,10 @@ hadoop jar target/myWordCount.jar com.dsp.dsp_assignment_2.TestSteps
 output_dir=/home/hadoop/outputs
 for d in $(hadoop fs -ls -C "$output_dir")
 do
-  echo $d
+  echo "$d"
   for f in $(hadoop fs -ls -C "$d" | grep part)
   do
-    echo $f
-    hadoop fs -cat $f
+    echo "$f"
+    hadoop fs -cat "$f"
   done
 done

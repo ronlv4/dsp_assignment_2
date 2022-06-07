@@ -1,5 +1,6 @@
 package com.dsp.mr_app;
 
+import com.dsp.dsp_assignment_2.PathEnum;
 import com.dsp.models.DecadeValue;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -98,9 +99,9 @@ public class step5CalculateLogLikelihood {
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(DoubleWritable.class);
-        FileInputFormat.addInputPath(job, new Path(args[1]));
 
-        FileOutputFormat.setOutputPath(job, new Path("/home/hadoop/outputs/output" + System.currentTimeMillis()));
+        FileInputFormat.addInputPath(job, new Path(args[PathEnum.STEP_4_OUTPUT.value]));
+        FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.BASE_PATH.value] + "outputs/final_output" + System.currentTimeMillis()));
         int done = job.waitForCompletion(true) ? 0 : 1;
         if (done == 1)
             System.exit(1);

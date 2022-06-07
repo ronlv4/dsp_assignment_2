@@ -1,5 +1,6 @@
 package com.dsp.mr_app;
 
+import com.dsp.dsp_assignment_2.PathEnum;
 import com.dsp.models.Unigram;
 import com.dsp.models.UnigramDecade;
 import org.apache.hadoop.conf.Configuration;
@@ -27,7 +28,6 @@ import java.util.Set;
 public class step1UnigramCount {
 
     public static final Logger logger = Logger.getLogger(step1UnigramCount.class);
-    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
     public static class UnigramMapper extends Mapper<Object, Text, UnigramDecade, IntWritable> {
         enum CountersEnum {
@@ -170,19 +170,10 @@ public class step1UnigramCount {
         job.setOutputValueClass(Text.class);
 
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
-        job.addCacheFile(new Path("/home/hadoop/stop-words/eng-stopwords.txt").toUri());
-        job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
-//        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/eng-stopwords.txt"));
-//        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt"));
-//        job.setInputFormatClass(SequenceFileInputFormat.class);
-//        SequenceFileInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
-//        SequenceFileInputFormat.setInputPaths(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/1gram/data"));
-
-        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-1grams/1grams-sample.txt"));
-//        FileInputFormat.addInputPath(job, new Path("/home/hadoop/input/googlebooks-eng-all-1gram-20090715-0.csv"));
-        args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
-//        args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
-        FileOutputFormat.setOutputPath(job, new Path(args[0]));
+        job.addCacheFile(new Path(args[PathEnum.STOP_WORDS.value]).toUri());
+        FileInputFormat.addInputPath(job, new Path(args[PathEnum.UNIGRAMS.value]));
+        args[PathEnum.STEP_1_OUTPUT.value] = args[PathEnum.BASE_PATH.value] + "outputs/output" + System.currentTimeMillis();
+        FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.STEP_1_OUTPUT.value]));
         int done = job.waitForCompletion(true) ? 0 : 1;
         if (done == 1)
             System.exit(1);
