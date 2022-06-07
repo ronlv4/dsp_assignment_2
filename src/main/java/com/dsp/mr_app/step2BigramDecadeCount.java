@@ -199,7 +199,7 @@ public class step2BigramDecadeCount {
         job.setOutputValueClass(IntWritable.class);
         //FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
 //        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-2grams/"));
-        FileInputFormat.addInputPath(job, new Path("/home/hadoop/2grams-sample.txt"));
+        FileInputFormat.addInputPath(job, new Path("/home/hadoop/google-2grams/2grams-sample.txt"));
         //FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
         args[1] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
 //        args[0] = BUCKET_HOME_SCHEME + "output" + System.currentTimeMillis();
