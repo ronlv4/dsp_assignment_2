@@ -1,6 +1,7 @@
 package com.dsp.dsp_assignment_2;
 
 import com.dsp.aws.emr.ClusterOperations;
+import com.dsp.aws.emr.StepsOperations;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.emr.EmrClient;
 import software.amazon.awssdk.services.emr.model.*;
@@ -33,18 +34,20 @@ public class App {
 
         if (lang.equals("heb") || lang1.equals("heb")){
             pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "heb-stopwords.txt";
-            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data";
-            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data";
-//            pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1gram-sample.txt";
-//            pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams-sample.txt";
+//            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data";
+//            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data";
+            pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1grams/1grams-sample.txt";
+            pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams/2grams-sample.txt";
         }
         else {
             pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "eng-stopwords.txt";
-            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/1gram/data";
-            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/2gram/data";
-//            pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1gram-sample.txt";
-//            pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams-sample.txt";
+//            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/1gram/data";
+//            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/2gram/data";
+            pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1grams/1grams-sample.txt";
+            pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams/2grams-sample.txt";
         }
+        StepsOperations.addNewStep(emr,"j-235XB4VVF0HYK", BUCKET_HOME_SCHEME + "/myWordCount.jar", "com.dsp.mr_app.step1UnigramCount", pipe, "step1");
+        System.exit(0);
 
 
         HadoopJarStepConfig step1 = HadoopJarStepConfig.builder()

@@ -24,10 +24,10 @@ public class TestSteps {
         pipe[PathEnum.STEP_5_OUTPUT.value] = "/home/hadoop/" + "outputs/output-step5-final" + UUID.randomUUID();
 
         step1UnigramCount.main(pipe);
-        step2BigramDecadeCount.main(pipe);
-        step3MergeUnigramsBigramsLeft.main(pipe);
-        step4MergeUnigramsBigramsRight.main(pipe);
-        step5CalculateLogLikelihood.main(pipe);
+//        step2BigramDecadeCount.main(pipe);
+//        step3MergeUnigramsBigramsLeft.main(pipe);
+//        step4MergeUnigramsBigramsRight.main(pipe);
+//        step5CalculateLogLikelihood.main(pipe);
     }
 
 
