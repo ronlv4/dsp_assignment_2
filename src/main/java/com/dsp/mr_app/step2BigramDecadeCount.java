@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class step2BigramDecadeCount {
     /*
@@ -80,6 +81,7 @@ public class step2BigramDecadeCount {
                 while ((pattern = fis.readLine()) != null) {
                     patternsToSkip.add(pattern);
                 }
+                patternsToSkip = caseSensitive ? patternsToSkip : patternsToSkip.stream().map(String::toLowerCase).collect(Collectors.toSet());
             } catch (IOException ioe) {
                 System.err.println("Caught exception while parsing the cached file '"
                         + StringUtils.stringifyException(ioe));

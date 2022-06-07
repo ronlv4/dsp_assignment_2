@@ -2,6 +2,7 @@ package com.dsp.mr_app;
 
 import com.dsp.models.Unigram;
 import com.dsp.models.UnigramDecade;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -19,10 +20,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class step1UnigramCount {
 
@@ -49,7 +49,7 @@ public class step1UnigramCount {
             conf = context.getConfiguration();
             caseSensitive = conf.getBoolean("wordcount.case.sensitive", true);
             if (conf.getBoolean("wordcount.skip.patterns", false)) {
-                URI[] patternsURIs = Job.getInstance(conf).getCacheFiles();
+                List<URI> patternsURIs = Arrays.stream(Job.getInstance(conf).getCacheFiles()).filter(uri -> filterByLanguage(uri, conf)).collect(Collectors.toList());
                 for (URI patternsURI : patternsURIs) {
                     Path patternsPath = new Path(patternsURI.getPath());
                     String patternsFileName = patternsPath.getName().toString();
@@ -65,10 +65,17 @@ public class step1UnigramCount {
                 while ((pattern = fis.readLine()) != null) {
                     patternsToSkip.add(pattern);
                 }
+                patternsToSkip = caseSensitive ? patternsToSkip : patternsToSkip.stream().map(String::toLowerCase).collect(Collectors.toSet());
             } catch (IOException ioe) {
                 System.err.println("Caught exception while parsing the cached file '"
                         + StringUtils.stringifyException(ioe));
             }
+        }
+
+        private boolean filterByLanguage(URI uri, Configuration conf){
+            String language = conf.get("wordcount.input.language");
+            String fileName = FilenameUtils.getName(uri.getPath());
+            return fileName.startsWith(language);
         }
 
         @Override
@@ -159,6 +166,8 @@ public class step1UnigramCount {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step1UnigramCount.class);
+        conf.set("wordcount.input.language", (args[1]));
+        conf.setBoolean("wordcount.case.sensitive", Boolean.parseBoolean(args[2]));
         job.setMapperClass(UnigramMapper.class);
         //job.setPartitionerClass(UnigramPartitioner.class);
         job.setCombinerClass(UnigramDecadeCombiner.class);
