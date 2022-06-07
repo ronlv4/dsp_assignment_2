@@ -166,6 +166,8 @@ public class step1UnigramCount {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step1UnigramCount.class);
+        args[1] = org.apache.commons.lang3.StringUtils.isEmpty(args[1]) ? "eng" : args[1];
+        args[2] = org.apache.commons.lang3.StringUtils.isEmpty(args[1]) ? "false" : args[2];
         conf.set("wordcount.input.language", (args[1]));
         conf.setBoolean("wordcount.case.sensitive", Boolean.parseBoolean(args[2]));
         job.setMapperClass(UnigramMapper.class);
