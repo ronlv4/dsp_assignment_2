@@ -38,7 +38,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.dsp.dsp_assignment_2.TestSteps</mainClass>
+                            <mainClass>com.dsp.dsp_assignment_2.App</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
