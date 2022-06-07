@@ -15,38 +15,15 @@ public class App {
 
     public static void main(String[] args) {
 
-        // START OF TESTING SECTION
-
-//        String language = args[1];
         EmrClient emr = EmrClient.builder().region(REGION).build();
 
-//        String jobFlowId = "j-13WCCUKJB25DU";
-//        jobFlowId = CreateCluster.createCluster(emr,
-//               key,
-//                BUCKET_HOME_SCHEME + "logs",
-//                3);
-//        System.out.println("JobFlowId: " + jobFlowId);
-//        AddSteps.addNewStep(
-//                emr,
-//                jobFlowId,
-//                BUCKET_HOME_SCHEME + "myWordCount.jar",
-//                "com.dsp.dsp_assignment_2.TestSteps",
-//                new String[]{},
-//                "wc5"
-//        );
-
-
-        // System.exit(0); // END OF TESTING SECTION
-        // Real App:
-
-        if (args.length != 1) {
-            String usage = "Usage: <language>";
-            System.out.println(usage);
-            System.exit(1);
-        }
 
         String[] pipe = new String[9];
         String lang = args[0];
+        String lang1 = args[0];
+        if(args.length >= 2)
+            lang1 = args[1];
+
         pipe[PathEnum.BASE_PATH.value-1] = BUCKET_HOME_SCHEME;
         pipe[PathEnum.STEP_1_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step1" + UUID.randomUUID();
         pipe[PathEnum.STEP_2_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step2" + UUID.randomUUID();
@@ -54,7 +31,7 @@ public class App {
         pipe[PathEnum.STEP_4_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step4" + UUID.randomUUID();
         pipe[PathEnum.STEP_5_OUTPUT.value-1] = BUCKET_HOME_SCHEME + "outputs/output-step5-final" + UUID.randomUUID();
 
-        if (lang.equals("heb")){
+        if (lang.equals("heb") || lang1.equals("heb")){
             pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "heb-stopwords.txt";
 //            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data";
 //            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data";

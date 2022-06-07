@@ -3,10 +3,10 @@
 ./create_step_jars.sh
 mvn package
 ###aws s3 cp target/myWordCount.jar s3://dsp-assignment-2/
-for i in {1..5}
-do
-	aws s3 cp target/step$i.jar s3://dsp-assignment-2/
-done
+#for i in {1..5}
+#do
+	#aws s3 cp target/step$i.jar s3://dsp-assignment-2-shir/
+#done
 hadoop fs -rm -f -R /home/hadoop/outputs/*
 hadoop jar target/myWordCount.jar com.dsp.dsp_assignment_2.TestSteps eng
 output_dir=/home/hadoop/outputs
