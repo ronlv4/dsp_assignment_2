@@ -170,9 +170,8 @@ public class step1UnigramCount {
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step1UnigramCount.class);
         args[1] = org.apache.commons.lang3.StringUtils.isEmpty(args[1]) ? "eng" : args[1];
-        args[2] = org.apache.commons.lang3.StringUtils.isEmpty(args[1]) ? "false" : args[2];
         conf.set("wordcount.input.language", (args[1]));
-        conf.setBooleanIfUnset("wordcount.case.sensitive", Boolean.parseBoolean(args[2]));
+        conf.setBooleanIfUnset("wordcount.case.sensitive", false);
         job.setMapperClass(UnigramMapper.class);
         //job.setPartitionerClass(UnigramPartitioner.class);
         job.setCombinerClass(UnigramDecadeCombiner.class);

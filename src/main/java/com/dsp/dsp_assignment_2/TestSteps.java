@@ -20,7 +20,6 @@ public class TestSteps {
             System.out.println(usage);
             System.exit(1);
         }
-        args[2] = StringUtils.isEmpty(args[1]) ? "false" : "true";
         logger.debug("args out: " + Arrays.toString(args));
 
         try {
