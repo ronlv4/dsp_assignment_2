@@ -51,16 +51,15 @@ public class UnigramDecade implements WritableComparable<UnigramDecade> {
 
     public int compareTo(UnigramDecade o) {
         /*
-        Primary sort by Unigram unigram
-        Secondary sort by IntWritable year
+        Primary sort by year
+        Secondary sort by unigram
          */
-        return  unigram.compareTo(o.getUnigram()) < 0 ? -1 :
-                unigram.compareTo(o.getUnigram()) > 0 ? 1 :
-                decade.compareTo(o.getDecade());
+        return  decade.compareTo(o.getDecade()) != 0 ? decade.compareTo(o.getDecade()) :
+                unigram.compareTo(o.getUnigram());
     }
 
     @Override
     public String toString() {
-        return unigram + " " + decade;
+        return unigram + ":" + decade;
     }
 }

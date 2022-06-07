@@ -17,7 +17,7 @@
     </repositories>
     <!-- setting language level to 8, was 5 before-->
     <build>
-        <finalName>myWordCount</finalName>
+        <finalName>step4</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -38,7 +38,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.dsp.dsp_assignment_2.TestSteps</mainClass>
+                            <mainClass>com.dsp.mr_app.step4MergeUnigramsBigramsRight</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

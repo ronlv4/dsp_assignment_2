@@ -1,5 +1,6 @@
 package com.dsp.mr_app;
 
+import com.dsp.dsp_assignment_2.PathEnum;
 import com.dsp.models.Bigram;
 import com.dsp.models.BigramDecade;
 import org.apache.hadoop.conf.Configuration;
@@ -10,10 +11,10 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class step2BigramDecadeCount {
     /*
@@ -35,7 +37,6 @@ public class step2BigramDecadeCount {
      */
 
     public static final Logger logger = Logger.getLogger(step2BigramDecadeCount.class);
-    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
 
 
     public static class BigramMapper extends Mapper<Object, Text, BigramDecade, IntWritable> {
@@ -70,6 +71,7 @@ public class step2BigramDecadeCount {
                     String patternsFileName = patternsPath.getName().toString();
                     parseSkipFile(patternsFileName);
                 }
+                patternsToSkip = caseSensitive ? patternsToSkip : patternsToSkip.stream().map(String::toLowerCase).collect(Collectors.toSet());
             }
         }
 
@@ -116,15 +118,11 @@ public class step2BigramDecadeCount {
                 IntWritable decade = new IntWritable(year / 10);
                 logger.info("writing bigram '" + bigram + "', decade: " + decade + ", count: " + count);
                 context.write(new BigramDecade(bigram, decade), count);
-                // Set second to *
-                Bigram bigram1 = new Bigram(new Text(lineElements[0].split("\\s")[0]), new Text("*"));
-                context.write(new BigramDecade(bigram1, decade), count);
             }
         }
     }
 
-
-    public static class IntSumCombiner extends Reducer<BigramDecade, IntWritable, BigramDecade, IntWritable> {
+    public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, IntWritable> {
         /*
         Reducer Input:
             same as mapper output
@@ -148,34 +146,6 @@ public class step2BigramDecadeCount {
         }
     }
 
-
-    public static class IntSumReducer extends Reducer<BigramDecade, IntWritable, BigramDecade, Text> {
-        /*
-        Reducer Input:
-            same as mapper output
-
-        Reducer Output:
-            Key: <w1 w2:decade>
-            Value: occurrences of thr bigram <w1 w2> in the decade
-         */
-        private int total = 0;
-
-        public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            int sum = 0;
-            logger.info("starting to count occurrences for " + key);
-            for (IntWritable val : values) {
-                sum += val.get();
-            }
-            if(key.getBigram().getSecond().equals(new Text("*"))) {
-                total = sum;
-            }
-            else {
-                String concated = String.format("%d,%d", sum, total);
-                context.write(key, new Text(concated));
-            }
-        }
-    }
-
     public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException {
         if (args.length < 1) {
             logger.error("not place to store output path");
@@ -185,24 +155,21 @@ public class step2BigramDecadeCount {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
-        job.addCacheFile(new Path("/home/hadoop/stop-words/eng-stopwords.txt").toUri());
-        job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
         job.setJarByClass(step2BigramDecadeCount.class);
         job.setMapperClass(BigramMapper.class);
-        job.setCombinerClass(IntSumCombiner.class);
+        job.setCombinerClass(IntSumReducer.class);
         job.setReducerClass(IntSumReducer.class);
         job.setMapOutputKeyClass(BigramDecade.class);
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputKeyClass(BigramDecade.class);
-        job.setOutputValueClass(Text.class);
-        //FileInputFormat.addInputPath(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-gb-all/2gram/data"));
-//        FileInputFormat.addInputPath(job, new Path(BUCKET_HOME_SCHEME + "google-2grams/"));
-        FileInputFormat.addInputPath(job, new Path("/home/hadoop/2grams-sample.txt"));
-        //FileOutputFormat.setOutputPath(job, new Path("s3://dsp-assignment-2/output" + System.currentTimeMillis()));
-        args[0] = "/home/hadoop/outputs/output" + System.currentTimeMillis();
-//        args[0] = BUCKET_HOME_SCHEME + "output" + System.currentTimeMillis();
-        FileOutputFormat.setOutputPath(job, new Path(args[0]));
-        job.waitForCompletion(true);
-        logger.info("Finished job 1 Successfully\n");
+        job.setOutputValueClass(IntWritable.class);
+
+        job.addCacheFile(new Path(args[PathEnum.STOP_WORDS.value]).toUri());
+        job.setInputFormatClass(SequenceFileInputFormat.class);
+        FileInputFormat.addInputPath(job, new Path(args[PathEnum.BIGRAMS.value]));
+        FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.STEP_2_OUTPUT.value]));
+        int done = job.waitForCompletion(true) ? 0 : 1;
+        if(done == 1)
+            System.exit(1);
     }
 }
