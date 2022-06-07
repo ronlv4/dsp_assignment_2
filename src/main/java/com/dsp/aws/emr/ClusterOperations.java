@@ -1,5 +1,7 @@
 package com.dsp.aws.emr;
 
+import com.dsp.dsp_assignment_2.TestSteps;
+import org.apache.log4j.Logger;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.services.ec2.model.InstanceType;
 
@@ -11,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClusterOperations {
+
+    public static final Logger logger = Logger.getLogger(ClusterOperations.class);
+
     public static String createCluster(EmrClient emr,
                                        String keys,
                                        String logUri,
@@ -40,7 +45,7 @@ public class ClusterOperations {
             RunJobFlowResponse response = emr.runJobFlow(jobFlowRequest);
             return response.jobFlowId();
         } catch (EmrException e) {
-            System.err.println(e.getMessage());
+            logger.error(e.getMessage());
             System.exit(1);
         }
 
@@ -79,7 +84,7 @@ public class ClusterOperations {
             RunJobFlowResponse response = emr.runJobFlow(jobFlowRequest);
             return response.jobFlowId();
         } catch (EmrException e) {
-            System.err.println(e.getMessage());
+            logger.error(e.getMessage());
             System.exit(1);
         }
 
@@ -150,7 +155,7 @@ public class ClusterOperations {
             return response.jobFlowId();
 
         } catch (EmrException e) {
-            System.err.println(e.getMessage());
+            logger.error(e.getMessage());
             System.exit(1);
         }
 
