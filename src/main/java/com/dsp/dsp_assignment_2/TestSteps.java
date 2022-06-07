@@ -11,7 +11,7 @@ public class TestSteps {
     public static final Logger logger = Logger.getLogger(TestSteps.class);
 
     public static void main(String[] args) throws Exception {
-        String[] pipe = new String[9];
+        String[] pipe = new String[10];
         pipe[PathEnum.BASE_PATH.value] = "/home/hadoop/";
         pipe[PathEnum.STOP_WORDS.value] = "/home/hadoop/stop-words/eng-stopwords.txt";
         pipe[PathEnum.UNIGRAMS.value] = "/home/hadoop/google-1grams/1grams-sample.txt";
