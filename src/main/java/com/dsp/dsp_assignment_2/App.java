@@ -40,8 +40,8 @@ public class App {
         }
         else {
             pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "eng-stopwords.txt";
-            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/1gram/data";
-            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/2gram/data";
+            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/1gram/data";
+            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/2gram/data";
 //            pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1gram-sample.txt";
 //            pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams-sample.txt";
         }
