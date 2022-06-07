@@ -12,6 +12,7 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.StringUtils;
 import org.apache.log4j.Logger;
@@ -166,10 +167,10 @@ public class step1UnigramCount {
     }
 
     public static void main(String[] args) throws Exception {
+        String corpus = args[1].equals("eng") ? "eng-us-all" : "heb-all";
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step1UnigramCount.class);
-        args[1] = org.apache.commons.lang3.StringUtils.isEmpty(args[1]) ? "eng" : args[1];
         conf.set("wordcount.input.language", (args[1]));
         conf.setBooleanIfUnset("wordcount.case.sensitive", false);
         job.setMapperClass(UnigramMapper.class);
@@ -183,11 +184,11 @@ public class step1UnigramCount {
         job.setOutputValueClass(Text.class);
 
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
-        job.addCacheFile(new Path("/home/hadoop/stop-words/eng-stopwords.txt").toUri());
-        job.addCacheFile(new Path("/home/hadoop/stop-words/heb-stopwords.txt").toUri());
+        job.addCacheFile(new Path("/home/hadoop/stop-words/" + args[1] + "-stopwords.txt").toUri());
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/eng-stopwords.txt"));
 //        job.addCacheFile(new URI(BUCKET_HOME_SCHEME + "stop-words/heb-stopwords.txt"));
 //        job.setInputFormatClass(SequenceFileInputFormat.class);
+        SequenceFileInputFormat.setInputPaths(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/" + corpus + "/1gram/data"));
 //        SequenceFileInputFormat.setInputPaths(job, new Path("/home/hadoop/google-1grams/data"));
 //        SequenceFileInputFormat.setInputPaths(job, new Path("s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/1gram/data"));
 
