@@ -8,17 +8,17 @@ import software.amazon.awssdk.services.emr.model.*;
 import java.util.UUID;
 
 public class App {
-    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2-shir/";
+    public static final String BUCKET_HOME_SCHEME = "s3://dsp-assignment-2/";
     public static final Region REGION = Region.US_EAST_1;
-    public static final String KEYS = "dist1";
+    public static final String KEYS = "linux_laptop";
     public static final int INSTANCE_COUNT = 3;
 
     public static void main(String[] args) {
+        EmrClient emr = EmrClient.builder().region(REGION).build();
 
         // START OF TESTING SECTION
 
 //        String language = args[1];
-        EmrClient emr = EmrClient.builder().region(REGION).build();
 
 //        String jobFlowId = "j-13WCCUKJB25DU";
 //        jobFlowId = CreateCluster.createCluster(emr,
@@ -47,27 +47,24 @@ public class App {
 
         String[] pipe = new String[9];
         String lang = args[0];
+        String corpus;
         pipe[PathEnum.BASE_PATH.value] = BUCKET_HOME_SCHEME;
         pipe[PathEnum.STEP_1_OUTPUT.value] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
         pipe[PathEnum.STEP_2_OUTPUT.value] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
         pipe[PathEnum.STEP_3_OUTPUT.value] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
         pipe[PathEnum.STEP_4_OUTPUT.value] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
         pipe[PathEnum.STEP_5_OUTPUT.value] = BUCKET_HOME_SCHEME + "outputs/output" + UUID.randomUUID();
+        pipe[PathEnum.STOP_WORDS.value] = BUCKET_HOME_SCHEME + "stop-words/" + lang + "-stopwords.txt";
 
-        if (lang.equals("heb")){
-            pipe[PathEnum.STOP_WORDS.value] = BUCKET_HOME_SCHEME + "heb-stopwords.txt";
-//            pipe[PathEnum.UNIGRAMS.value] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data";
-//            pipe[PathEnum.BIGRAMS.value] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data";
-            pipe[PathEnum.UNIGRAMS.value] = BUCKET_HOME_SCHEME + "1gram-sample.txt";
-            pipe[PathEnum.BIGRAMS.value] = BUCKET_HOME_SCHEME + "2grams-sample.txt";
-        }
-        else {
-            pipe[PathEnum.STOP_WORDS.value] = BUCKET_HOME_SCHEME + "eng-stopwords.txt";
-//            pipe[PathEnum.UNIGRAMS.value] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/1gram/data";
-//            pipe[PathEnum.BIGRAMS.value] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/2gram/data";
-            pipe[PathEnum.UNIGRAMS.value] = BUCKET_HOME_SCHEME + "1gram-sample.txt";
-            pipe[PathEnum.BIGRAMS.value] = BUCKET_HOME_SCHEME + "2grams-sample.txt";
-        }
+        if (lang.equals("heb"))
+            corpus = "heb-all";
+        else
+            corpus = "eng-us-all";
+
+        pipe[PathEnum.UNIGRAMS.value] = BUCKET_HOME_SCHEME + "1grams/1gram-sample.txt";
+        pipe[PathEnum.BIGRAMS.value] = BUCKET_HOME_SCHEME + "2grams/2grams-sample.txt";
+//        pipe[PathEnum.UNIGRAMS.value] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/" + corpus + "/1gram/data";
+//        pipe[PathEnum.BIGRAMS.value] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/" + corpus + "/2gram/data";
 
 
         HadoopJarStepConfig step1 = HadoopJarStepConfig.builder()
@@ -97,7 +94,7 @@ public class App {
         HadoopJarStepConfig step3 = HadoopJarStepConfig.builder()
                 .jar(BUCKET_HOME_SCHEME + "step3.jar")
                 .mainClass("step3SortBigramsDecadeByOccurence")
-                .args(args)
+                .args(pipe)
                 .build();
 
         StepConfig step3Config = StepConfig.builder()
@@ -109,7 +106,7 @@ public class App {
         HadoopJarStepConfig step4 = HadoopJarStepConfig.builder()
                 .jar(BUCKET_HOME_SCHEME + "step4.jar")
                 .mainClass("step4MergeUnigramsBigramsRight")
-                .args(args)
+                .args(pipe)
                 .build();
 
         StepConfig step4Config = StepConfig.builder()
@@ -121,7 +118,7 @@ public class App {
         HadoopJarStepConfig step5 = HadoopJarStepConfig.builder()
                 .jar(BUCKET_HOME_SCHEME + "step5.jar")
                 .mainClass("step5CalculateLogLikelihood")
-                .args(args)
+                .args(pipe)
                 .build();
 
         StepConfig step5Config = StepConfig.builder()
