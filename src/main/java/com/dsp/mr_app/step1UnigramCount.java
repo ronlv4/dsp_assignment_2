@@ -73,7 +73,7 @@ public class step1UnigramCount {
         }
 
         private boolean filterByLanguage(URI uri, Configuration conf){
-            String language = conf.get("wordcount.input.language");
+            String language = conf.get("wordcount.input.language", "eng");
             String fileName = FilenameUtils.getName(uri.getPath());
             logger.debug("language: " + language);
             logger.debug("uri path: " + uri.getPath());
