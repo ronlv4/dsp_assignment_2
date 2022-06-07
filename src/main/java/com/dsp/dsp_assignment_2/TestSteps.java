@@ -9,7 +9,6 @@ public class TestSteps {
     public static final Logger logger = Logger.getLogger(TestSteps.class);
 
     public static void main(String[] args) throws Exception {
-        logger.error("not really error");
         try {
             String[] pipe = new String[3];
             step1UnigramCount.main(pipe);

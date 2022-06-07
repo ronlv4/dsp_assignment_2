@@ -195,7 +195,9 @@ public class step1UnigramCount {
 //        args[0] = BUCKET_HOME_SCHEME + "outputs/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[0]));
         int done = job.waitForCompletion(true) ? 0 : 1;
-        if (done == 1)
+        logger.error("finished " + step1UnigramCount.class.getName() + "with status " + done);
+        if (done == 1){
             System.exit(1);
+        }
     }
 }
