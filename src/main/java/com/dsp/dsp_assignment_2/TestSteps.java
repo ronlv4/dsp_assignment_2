@@ -9,12 +9,17 @@ public class TestSteps {
     public static final Logger logger = Logger.getLogger(TestSteps.class);
 
     public static void main(String[] args) throws Exception {
-        String[] pipe = new String[3];
-        step1UnigramCount.main(pipe);
-        step2BigramDecadeCount.main(pipe);
-        step3MergeUnigramsBigramsLeft.main(pipe);
-        step4MergeUnigramsBigramsRight.main(pipe);
-        step5CalculateLogLikelihood.main(pipe);
+        try {
+            String[] pipe = new String[3];
+            step1UnigramCount.main(pipe);
+            step2BigramDecadeCount.main(pipe);
+            step3MergeUnigramsBigramsLeft.main(pipe);
+            step4MergeUnigramsBigramsRight.main(pipe);
+            step5CalculateLogLikelihood.main(pipe);
+        } catch (Exception e){
+            logger.error(e.getMessage(), e);
+            throw e;
+        }
     }
 
 
