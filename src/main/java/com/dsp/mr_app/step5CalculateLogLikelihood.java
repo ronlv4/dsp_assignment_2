@@ -101,7 +101,7 @@ public class step5CalculateLogLikelihood {
         job.setOutputValueClass(DoubleWritable.class);
 
         FileInputFormat.addInputPath(job, new Path(args[PathEnum.STEP_4_OUTPUT.value]));
-        FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.BASE_PATH.value] + "outputs/final_output" + System.currentTimeMillis()));
+        FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.STEP_5_OUTPUT.value] ));
         int done = job.waitForCompletion(true) ? 0 : 1;
         if (done == 1)
             System.exit(1);

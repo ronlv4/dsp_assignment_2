@@ -8,7 +8,8 @@ public enum PathEnum {
     STEP_1_OUTPUT(4),
     STEP_2_OUTPUT(5),
     STEP_3_OUTPUT(6),
-    STEP_4_OUTPUT(7);
+    STEP_4_OUTPUT(7),
+    STEP_5_OUTPUT(8);
 
 
     public final int value;

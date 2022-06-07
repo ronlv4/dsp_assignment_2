@@ -174,7 +174,6 @@ public class step1UnigramCount {
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
         job.addCacheFile(new Path(args[PathEnum.STOP_WORDS.value]).toUri());
         FileInputFormat.addInputPath(job, new Path(args[PathEnum.UNIGRAMS.value]));
-        args[PathEnum.STEP_1_OUTPUT.value] = args[PathEnum.BASE_PATH.value] + "outputs/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.STEP_1_OUTPUT.value]));
         int done = job.waitForCompletion(true) ? 0 : 1;
         if (done == 1)

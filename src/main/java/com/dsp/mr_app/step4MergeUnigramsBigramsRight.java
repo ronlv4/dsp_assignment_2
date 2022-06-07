@@ -99,7 +99,6 @@ public class step4MergeUnigramsBigramsRight {
 
         FileInputFormat.addInputPath(job, new Path(args[PathEnum.STEP_1_OUTPUT.value]));
         FileInputFormat.addInputPath(job, new Path(args[PathEnum.STEP_3_OUTPUT.value]));
-        args[PathEnum.STEP_4_OUTPUT.value] = args[PathEnum.BASE_PATH.value] + "outputs/output" + System.currentTimeMillis();
         FileOutputFormat.setOutputPath(job, new Path(args[PathEnum.STEP_4_OUTPUT.value]));
         int done = job.waitForCompletion(true) ? 0 : 1;
         if(done == 1)
