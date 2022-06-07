@@ -9,7 +9,7 @@ public class TestSteps {
     public static final Logger logger = Logger.getLogger(TestSteps.class);
 
     public static void main(String[] args) throws Exception {
-        String[] pipe = new String[2];
+        String[] pipe = new String[3];
         step1UnigramCount.main(pipe);
         step2BigramDecadeCount.main(pipe);
         step3MergeUnigramsBigramsLeft.main(pipe);

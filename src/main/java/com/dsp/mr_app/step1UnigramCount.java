@@ -169,7 +169,7 @@ public class step1UnigramCount {
         args[1] = org.apache.commons.lang3.StringUtils.isEmpty(args[1]) ? "eng" : args[1];
         args[2] = org.apache.commons.lang3.StringUtils.isEmpty(args[1]) ? "false" : args[2];
         conf.set("wordcount.input.language", (args[1]));
-        conf.setBoolean("wordcount.case.sensitive", Boolean.parseBoolean(args[2]));
+        conf.setBooleanIfUnset("wordcount.case.sensitive", Boolean.parseBoolean(args[2]));
         job.setMapperClass(UnigramMapper.class);
         //job.setPartitionerClass(UnigramPartitioner.class);
         job.setCombinerClass(UnigramDecadeCombiner.class);
