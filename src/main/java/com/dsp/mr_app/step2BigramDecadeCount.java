@@ -89,7 +89,6 @@ public class step2BigramDecadeCount {
         }
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            logger.info("got from record reader the line " + value);
             String[] bigramLines = value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
             Iterator<String> bigramItertor = Arrays.stream(bigramLines).iterator();
             String bigramLine;
@@ -98,13 +97,11 @@ public class step2BigramDecadeCount {
 
             while (bigramItertor.hasNext()) {
                 bigramLine = bigramItertor.next();
-                logger.info("processing line " + bigramLine);
                 String[] lineElements = bigramLine.split("\\t");
                 String bigramStr = (caseSensitive) ? lineElements[0] : lineElements[0].toLowerCase();
                 if(bigramStr.split("\\s").length < 2)
                     continue;
                 if (Arrays.stream(bigramStr.split("\\s")).anyMatch(patternsToSkip::contains)) {
-                    logger.info("skipping line " + bigramLine);
                     context.getCounter(step2BigramDecadeCount.BigramMapper.CountersEnum.SKIPPED_WORDS).increment(1);
                     continue;
                 }
@@ -116,7 +113,6 @@ public class step2BigramDecadeCount {
                     continue;
                 }
                 IntWritable decade = new IntWritable(year / 10);
-                logger.info("writing bigram '" + bigram + "', decade: " + decade + ", count: " + count);
                 context.write(new BigramDecade(bigram, decade), count);
             }
         }
@@ -136,11 +132,9 @@ public class step2BigramDecadeCount {
 
         public void reduce(BigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
             int sum = 0;
-            logger.info("starting to count occurrences for " + key);
             for (IntWritable val : values) {
                 sum += val.get();
             }
-            logger.info("counted: " + sum);
             result.set(sum);
             context.write(key, result);
         }
@@ -151,7 +145,6 @@ public class step2BigramDecadeCount {
             logger.error("not place to store output path");
             System.exit(1);
         }
-        logger.info("Starting " + step2BigramDecadeCount.class.getName() + " map reduce app");
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);

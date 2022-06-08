@@ -23,7 +23,6 @@ public class step4MergeUnigramsBigramsRight {
 
     public static class MergeMapper extends Mapper<Object, Text, ReverseBigramDecade, Text> {
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            logger.info("got from record reader the line " + value);
             String[] keyValue = value.toString().split("\\t");
             String val =keyValue[1];
             String[] bigramOrUnigramDecade = keyValue[0].split(":");
@@ -46,7 +45,7 @@ public class step4MergeUnigramsBigramsRight {
     public static class ReverseMergePartitioner extends Partitioner<ReverseBigramDecade, Text> {
         @Override
         public int getPartition(ReverseBigramDecade reverseBigramDecade, Text text, int numPartitions) {
-            return reverseBigramDecade.getBigram().getSecond().toString().hashCode() % numPartitions;
+            return (reverseBigramDecade.getBigram().getSecond().toString().hashCode() & 0x7fffffff) % numPartitions;
         }
     }
 
@@ -59,9 +58,7 @@ public class step4MergeUnigramsBigramsRight {
         String currentRightWord = "";
 
         public void reduce(ReverseBigramDecade key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            logger.info("starting to count occurrences for " + key);
             Text val = values.iterator().next();
-            logger.info("value is " + val.toString());
             if(key.getBigram().getFirst().equals(new Text("*"))) {
                 currentTotal[0] = val.toString().split(",")[0];
                 currentTotal[1] = val.toString().split(",")[1];
@@ -88,7 +85,6 @@ public class step4MergeUnigramsBigramsRight {
             logger.error("not place to store output path");
             System.exit(1);
         }
-        logger.info("Starting " + step4MergeUnigramsBigramsRight.class.getName() + " map reduce app");
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step4MergeUnigramsBigramsRight.class);

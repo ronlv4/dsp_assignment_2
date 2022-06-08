@@ -76,8 +76,6 @@ public class step1UnigramCount {
 
         @Override
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            logger.info("key: " + key);
-            logger.info("value: " + value);
             String[] unigramLines = value.toString().split("\\R");
             Iterator<String> unigramItertor = Arrays.stream(unigramLines).iterator();
             String unigramLine;
@@ -87,7 +85,6 @@ public class step1UnigramCount {
             while (unigramItertor.hasNext()) {
                 context.getCounter(CountersEnum.INPUT_WORDS).increment(1);
                 unigramLine = unigramItertor.next();
-                logger.info("processing line " + unigramLine);
                 String[] lineElements = unigramLine.split("\\t");
                 try {
                     unigram = (caseSensitive) ? Unigram.fromString(lineElements[0]) : Unigram.fromString(lineElements[0].toLowerCase());
@@ -102,7 +99,6 @@ public class step1UnigramCount {
                     continue;
                 }
                 IntWritable decade = new IntWritable(year / 10);
-                logger.info("writing unigram '" + unigram + "', decade: " + decade + ", count: " + count);
                 context.write(new UnigramDecade(unigram, decade), count);
                 context.write(new UnigramDecade(Unigram.fromString("*"), decade), count); // for counting total words per decade
             }
@@ -113,12 +109,10 @@ public class step1UnigramCount {
         private IntWritable result = new IntWritable();
 
         public void reduce(UnigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            logger.info("starting to count occurrences for " + key);
             int sum = 0;
             for (IntWritable val : values) {
                 sum += val.get();
             }
-            logger.info("counted: " + sum);
             result.set(sum);
             context.write(key, result);
         }
@@ -138,7 +132,6 @@ public class step1UnigramCount {
         private int currentDecade = 0;
 
         public void reduce(UnigramDecade key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
-            logger.info("starting to count occurrences for " + key);
             int sum = 0;
             for (IntWritable val : values) {
                 sum += val.get();
@@ -152,7 +145,6 @@ public class step1UnigramCount {
                     total = 1;
                     currentDecade = key.getDecade().get();
                 }
-                logger.info("counted: " + sum);
                 context.write(key, new Text(String.format("%d,%d", total, sum)));
             }
         }

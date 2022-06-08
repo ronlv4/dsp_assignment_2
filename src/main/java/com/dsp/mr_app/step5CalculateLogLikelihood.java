@@ -30,13 +30,12 @@ public class step5CalculateLogLikelihood {
             double p1 = c12 / c1;
             double p2 = (c2 - c12) / (N - c1);
 
-            return Math.log(calcL(c12, c1, p)) + Math.log(calcL(c2 - c12, N - c1, p)) -
-                    Math.log(calcL(c12, c1, p1)) - Math.log(calcL(c2 - c12, N - c1, p2));
+            return (-2.0) * (Math.log(calcL(c12, c1, p)) + Math.log(calcL(c2 - c12, N - c1, p)) -
+                    Math.log(calcL(c12, c1, p1)) - Math.log(calcL(c2 - c12, N - c1, p2)));
         }
 
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            logger.info("got from record reader the line " + value);
             String[] keyValue = value.toString().split("\\t");
             String oldKey = keyValue[0];
             String val = keyValue[1];
@@ -62,9 +61,7 @@ public class step5CalculateLogLikelihood {
         private final HashMap<Integer, Integer> countMap = new HashMap<>();
 
         public void reduce(DecadeValue key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            logger.info("starting to count occurrences for " + key);
             Text val = values.iterator().next();
-            logger.info("value is " + val.toString());
             int decade = key.getDecade().get();
             if(currentDecade != decade) {
                 currentDecade = decade;

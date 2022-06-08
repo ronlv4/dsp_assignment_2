@@ -24,7 +24,6 @@ public class step3MergeUnigramsBigramsLeft {
     public static class MergeMapper extends Mapper<Object, Text, BigramDecade, Text> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            logger.info("got from record reader the line " + value);
             String[] keyValue = value.toString().split("\\t");
             String val =keyValue[1];
             String[] bigramOrUnigramDecade = keyValue[0].split(":");
@@ -48,7 +47,7 @@ public class step3MergeUnigramsBigramsLeft {
 
         @Override
         public int getPartition(BigramDecade bigramDecade, Text text, int numPartitions) {
-            return bigramDecade.getBigram().getFirst().toString().hashCode() % numPartitions;
+            return (bigramDecade.getBigram().getFirst().toString().hashCode() & 0x7fffffff) % numPartitions;
         }
     }
 
@@ -58,7 +57,6 @@ public class step3MergeUnigramsBigramsLeft {
         int currentDecade = 0;
         String currentLeftWord = "";
         public void reduce(BigramDecade key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            logger.info("starting to count occurrences for " + key);
             Text val = values.iterator().next();
             if(key.getBigram().getSecond().equals(new Text("*"))) {
                 currentTotal[0] = val.toString().split(",")[0];
@@ -86,7 +84,6 @@ public class step3MergeUnigramsBigramsLeft {
             logger.error("not place to store output path");
             System.exit(1);
         }
-        logger.info("Starting " + step3MergeUnigramsBigramsLeft.class.getName() + " map reduce app");
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(step3MergeUnigramsBigramsLeft.class);
