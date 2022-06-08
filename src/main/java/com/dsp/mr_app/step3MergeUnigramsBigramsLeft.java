@@ -24,22 +24,28 @@ public class step3MergeUnigramsBigramsLeft {
     public static class MergeMapper extends Mapper<Object, Text, BigramDecade, Text> {
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String[] keyValue = value.toString().split("\\t");
-            String val =keyValue[1];
-            String[] bigramOrUnigramDecade = keyValue[0].split(":");
-            int decade = Integer.parseInt(bigramOrUnigramDecade[1]);
-            String[] words = bigramOrUnigramDecade[0].split("\\s");
-            Bigram b;
-            if(words.length > 1) {
-                b = new Bigram(new Text(words[0]), new Text(words[1]));
+            try {
+                String[] keyValue = value.toString().split("\\t");
+                String val =keyValue[1];
+                String[] bigramOrUnigramDecade = keyValue[0].split(":");
+                int decade = Integer.parseInt(bigramOrUnigramDecade[1]);
+                String[] words = bigramOrUnigramDecade[0].split("\\s");
+                Bigram b;
+                if(words.length > 1) {
+                    b = new Bigram(new Text(words[0]), new Text(words[1]));
 
-            }
-            else {
-                b = new Bigram(new Text(words[0]), new Text("*"));
+                }
+                else {
+                    b = new Bigram(new Text(words[0]), new Text("*"));
 
+                }
+                BigramDecade newKey = new BigramDecade(b, new IntWritable(decade));
+                context.write(newKey, new Text(val));
             }
-            BigramDecade newKey = new BigramDecade(b, new IntWritable(decade));
-            context.write(newKey, new Text(val));
+            catch (Exception e) {
+                logger.info(String.format("Failed on %s with %s", value.toString(), e.getMessage()));
+            }
+
         }
     }
 

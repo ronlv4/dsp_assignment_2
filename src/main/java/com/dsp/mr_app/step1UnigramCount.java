@@ -83,24 +83,25 @@ public class step1UnigramCount {
             Unigram unigram;
             IntWritable count;
             while (unigramItertor.hasNext()) {
-                context.getCounter(CountersEnum.INPUT_WORDS).increment(1);
-                unigramLine = unigramItertor.next();
-                String[] lineElements = unigramLine.split("\\t");
-                try {
+                try{
+                    context.getCounter(CountersEnum.INPUT_WORDS).increment(1);
+                    unigramLine = unigramItertor.next();
+                    String[] lineElements = unigramLine.split("\\t");
                     unigram = (caseSensitive) ? Unigram.fromString(lineElements[0]) : Unigram.fromString(lineElements[0].toLowerCase());
                     if (patternsToSkip.contains(unigram.toString())) {
                         context.getCounter(CountersEnum.SKIPPED_WORDS).increment(1);
                         continue;
                     }
                     year = Integer.parseInt(lineElements[1]);
-                    count = new IntWritable(Integer.parseInt((lineElements[2])));
-                } catch (NumberFormatException ignored) {
-                    logger.error("failed to process line: " + unigramLine);
-                    continue;
+                        count = new IntWritable(Integer.parseInt((lineElements[2])));
+                    IntWritable decade = new IntWritable(year / 10);
+                    context.write(new UnigramDecade(unigram, decade), count);
+                    context.write(new UnigramDecade(Unigram.fromString("*"), decade), count); // for counting total words per decade
                 }
-                IntWritable decade = new IntWritable(year / 10);
-                context.write(new UnigramDecade(unigram, decade), count);
-                context.write(new UnigramDecade(Unigram.fromString("*"), decade), count); // for counting total words per decade
+                catch(Exception e){
+                    logger.info(String.format("Failed on %s with %s", value.toString(), e.getMessage()));
+                }
+
             }
         }
     }

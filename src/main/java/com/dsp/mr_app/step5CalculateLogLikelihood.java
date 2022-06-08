@@ -36,20 +36,26 @@ public class step5CalculateLogLikelihood {
 
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String[] keyValue = value.toString().split("\\t");
-            String oldKey = keyValue[0];
-            String val = keyValue[1];
-            String[] nums = val.split(",");
-            double c12 = Integer.parseInt(nums[0]);
-            double N = Integer.parseInt(nums[1]);
-            double c1 = Integer.parseInt(nums[2]);
-            double c2 = Integer.parseInt(nums[3]);
+            try {
+                String[] keyValue = value.toString().split("\\t");
+                String oldKey = keyValue[0];
+                String val = keyValue[1];
+                String[] nums = val.split(",");
+                double c12 = Integer.parseInt(nums[0]);
+                double N = Integer.parseInt(nums[1]);
+                double c1 = Integer.parseInt(nums[2]);
+                double c2 = Integer.parseInt(nums[3]);
 
-            double logLikelihood = calcLogLikelihood(c1, c2, c12, N);
+                double logLikelihood = calcLogLikelihood(c1, c2, c12, N);
 
-            int decade = Integer.parseInt(oldKey.split(":")[1]);
+                int decade = Integer.parseInt(oldKey.split(":")[1]);
 
-            context.write(new DecadeValue(new IntWritable(decade), new DoubleWritable(logLikelihood)), new Text(oldKey));
+                context.write(new DecadeValue(new IntWritable(decade), new DoubleWritable(logLikelihood)), new Text(oldKey));
+            }
+            catch (Exception e) {
+                logger.info(String.format("Failed on %s with %s", value.toString(), e.getMessage()));
+            }
+
         }
     }
 

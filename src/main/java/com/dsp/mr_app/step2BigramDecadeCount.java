@@ -96,24 +96,26 @@ public class step2BigramDecadeCount {
             IntWritable count;
 
             while (bigramItertor.hasNext()) {
-                bigramLine = bigramItertor.next();
-                String[] lineElements = bigramLine.split("\\t");
-                String bigramStr = (caseSensitive) ? lineElements[0] : lineElements[0].toLowerCase();
-                if(bigramStr.split("\\s").length < 2)
-                    continue;
-                if (Arrays.stream(bigramStr.split("\\s")).anyMatch(patternsToSkip::contains)) {
-                    context.getCounter(step2BigramDecadeCount.BigramMapper.CountersEnum.SKIPPED_WORDS).increment(1);
-                    continue;
-                }
-                Bigram bigram = new Bigram(new Text(bigramStr.split("\\s")[0]), new Text(bigramStr.split("\\s")[1]));
-                try {
+                try{
+                    bigramLine = bigramItertor.next();
+                    String[] lineElements = bigramLine.split("\\t");
+                    String bigramStr = (caseSensitive) ? lineElements[0] : lineElements[0].toLowerCase();
+                    if(bigramStr.split("\\s").length < 2)
+                        continue;
+                    if (Arrays.stream(bigramStr.split("\\s")).anyMatch(patternsToSkip::contains)) {
+                        context.getCounter(step2BigramDecadeCount.BigramMapper.CountersEnum.SKIPPED_WORDS).increment(1);
+                        continue;
+                    }
+                    Bigram bigram = new Bigram(new Text(bigramStr.split("\\s")[0]), new Text(bigramStr.split("\\s")[1]));
                     year = Integer.parseInt(lineElements[1]);
                     count = new IntWritable(Integer.parseInt((lineElements[2])));
-                } catch (NumberFormatException ignored) {
-                    continue;
+                    IntWritable decade = new IntWritable(year / 10);
+                    context.write(new BigramDecade(bigram, decade), count);
                 }
-                IntWritable decade = new IntWritable(year / 10);
-                context.write(new BigramDecade(bigram, decade), count);
+                catch(Exception e){
+                    logger.info(String.format("Failed on %s with %s", value.toString(), e.getMessage()));
+                }
+
             }
         }
     }

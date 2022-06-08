@@ -23,22 +23,27 @@ public class step4MergeUnigramsBigramsRight {
 
     public static class MergeMapper extends Mapper<Object, Text, ReverseBigramDecade, Text> {
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String[] keyValue = value.toString().split("\\t");
-            String val =keyValue[1];
-            String[] bigramOrUnigramDecade = keyValue[0].split(":");
-            int decade = Integer.parseInt(bigramOrUnigramDecade[1]);
-            String[] words = bigramOrUnigramDecade[0].split("\\s");
-            ReverseBigram b;
-            if(words.length > 1) {
-                b = new ReverseBigram(new Text(words[0]), new Text(words[1]));
+            try{
+                String[] keyValue = value.toString().split("\\t");
+                String val =keyValue[1];
+                String[] bigramOrUnigramDecade = keyValue[0].split(":");
+                int decade = Integer.parseInt(bigramOrUnigramDecade[1]);
+                String[] words = bigramOrUnigramDecade[0].split("\\s");
+                ReverseBigram b;
+                if(words.length > 1) {
+                    b = new ReverseBigram(new Text(words[0]), new Text(words[1]));
 
-            }
-            else {
-                b = new ReverseBigram(new Text("*"), new Text(words[0]));
+                }
+                else {
+                    b = new ReverseBigram(new Text("*"), new Text(words[0]));
 
+                }
+                ReverseBigramDecade newKey = new ReverseBigramDecade(b, new IntWritable(decade));
+                context.write(newKey, new Text(val));
             }
-            ReverseBigramDecade newKey = new ReverseBigramDecade(b, new IntWritable(decade));
-            context.write(newKey, new Text(val));
+            catch (Exception e) {
+                logger.info(String.format("Failed on %s with %s", value.toString(), e.getMessage()));
+            }
         }
     }
 
