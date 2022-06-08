@@ -9,7 +9,9 @@ public enum PathEnum {
     STEP_2_OUTPUT(6),
     STEP_3_OUTPUT(7),
     STEP_4_OUTPUT(8),
-    STEP_5_OUTPUT(9);
+    STEP_5_OUTPUT(9),
+
+    LANG(10);
 
 
     public final int value;

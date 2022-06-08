@@ -57,12 +57,14 @@ public class step2BigramDecadeCount {
         private boolean caseSensitive;
         private Set<String> patternsToSkip = new HashSet<String>();
 
+        private boolean isEng;
         private Configuration conf;
         private BufferedReader fis;
 
         @Override
         public void setup(Context context) throws IOException, InterruptedException {
             conf = context.getConfiguration();
+            isEng = conf.getBoolean("is.eng", true);
             caseSensitive = conf.getBoolean("wordcount.case.sensitive", true);
             if (conf.getBoolean("wordcount.skip.patterns", false)) {
                 URI[] patternsURIs = Job.getInstance(conf).getCacheFiles();
@@ -89,33 +91,32 @@ public class step2BigramDecadeCount {
         }
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String[] bigramLines = value.toString().split("\\R"); // bigram TAB year TAB occurrences TAB books
-            Iterator<String> bigramItertor = Arrays.stream(bigramLines).iterator();
-            String bigramLine;
+            String bigramLine = value.toString();
+            String bigramStr;
             int year;
             IntWritable count;
+            try{
+                String[] lineElements = bigramLine.split("\\t");
+                bigramStr = lineElements[0];
+                if(bigramStr.split("\\s").length < 2)
+                    return;
+                String first = isEng ? bigramStr.split("\\s")[0].replaceAll("[^a-zA-Z]", "") : bigramStr.split("\\s")[0];
+                String second = isEng ? bigramStr.split("\\s")[1].replaceAll("[^a-zA-Z]", "") : bigramStr.split("\\s")[1];
+                first = caseSensitive ? first : first.toLowerCase();
+                second = caseSensitive ? second : second.toLowerCase();
 
-            while (bigramItertor.hasNext()) {
-                try{
-                    bigramLine = bigramItertor.next();
-                    String[] lineElements = bigramLine.split("\\t");
-                    String bigramStr = (caseSensitive) ? lineElements[0] : lineElements[0].toLowerCase();
-                    if(bigramStr.split("\\s").length < 2)
-                        continue;
-                    if (Arrays.stream(bigramStr.split("\\s")).anyMatch(patternsToSkip::contains)) {
-                        context.getCounter(step2BigramDecadeCount.BigramMapper.CountersEnum.SKIPPED_WORDS).increment(1);
-                        continue;
-                    }
-                    Bigram bigram = new Bigram(new Text(bigramStr.split("\\s")[0]), new Text(bigramStr.split("\\s")[1]));
-                    year = Integer.parseInt(lineElements[1]);
-                    count = new IntWritable(Integer.parseInt((lineElements[2])));
-                    IntWritable decade = new IntWritable(year / 10);
-                    context.write(new BigramDecade(bigram, decade), count);
+                if (patternsToSkip.contains(first) || patternsToSkip.contains(second) || first.isEmpty() || second.isEmpty()) {
+                    context.getCounter(step1UnigramCount.UnigramMapper.CountersEnum.SKIPPED_WORDS).increment(1);
+                    return;
                 }
-                catch(Exception e){
-                    logger.info(String.format("Failed on %s with %s", value.toString(), e.getMessage()));
-                }
-
+                Bigram bigram = new Bigram(new Text(first), new Text(second));
+                year = Integer.parseInt(lineElements[1]);
+                count = new IntWritable(Integer.parseInt((lineElements[2])));
+                IntWritable decade = new IntWritable(year / 10);
+                context.write(new BigramDecade(bigram, decade), count);
+            }
+            catch(Exception e){
+                logger.info(String.format("Failed on %s with %s", value.toString(), e.getMessage()));
             }
         }
     }
@@ -150,6 +151,8 @@ public class step2BigramDecadeCount {
         Configuration conf = new Configuration();
         Job job = Job.getInstance(conf, "word count");
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
+        if(args[PathEnum.LANG.value].equals("heb"))
+            job.getConfiguration().setBoolean("is.eng", false);
         job.setJarByClass(step2BigramDecadeCount.class);
         job.setMapperClass(BigramMapper.class);
         job.setCombinerClass(IntSumReducer.class);

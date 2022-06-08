@@ -41,6 +41,8 @@ public class step1UnigramCount {
         private Text word = new Text();
 
         private boolean caseSensitive;
+
+        private boolean isEng;
         private Set<String> patternsToSkip = new HashSet<String>();
 
         private Configuration conf;
@@ -49,6 +51,7 @@ public class step1UnigramCount {
         @Override
         public void setup(Context context) throws IOException, InterruptedException {
             conf = context.getConfiguration();
+            isEng = conf.getBoolean("is.eng", true);
             caseSensitive = conf.getBoolean("wordcount.case.sensitive", true);
             if (conf.getBoolean("wordcount.skip.patterns", false)) {
                 URI[] patternsURIs = Job.getInstance(conf).getCacheFiles();
@@ -76,32 +79,28 @@ public class step1UnigramCount {
 
         @Override
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String[] unigramLines = value.toString().split("\\R");
-            Iterator<String> unigramItertor = Arrays.stream(unigramLines).iterator();
-            String unigramLine;
+            String unigramLine = value.toString();
             int year;
             Unigram unigram;
+            String unigramString;
             IntWritable count;
-            while (unigramItertor.hasNext()) {
-                try{
-                    context.getCounter(CountersEnum.INPUT_WORDS).increment(1);
-                    unigramLine = unigramItertor.next();
-                    String[] lineElements = unigramLine.split("\\t");
-                    unigram = (caseSensitive) ? Unigram.fromString(lineElements[0]) : Unigram.fromString(lineElements[0].toLowerCase());
-                    if (patternsToSkip.contains(unigram.toString())) {
-                        context.getCounter(CountersEnum.SKIPPED_WORDS).increment(1);
-                        continue;
-                    }
-                    year = Integer.parseInt(lineElements[1]);
-                        count = new IntWritable(Integer.parseInt((lineElements[2])));
-                    IntWritable decade = new IntWritable(year / 10);
-                    context.write(new UnigramDecade(unigram, decade), count);
-                    context.write(new UnigramDecade(Unigram.fromString("*"), decade), count); // for counting total words per decade
+            try{
+                context.getCounter(CountersEnum.INPUT_WORDS).increment(1);
+                String[] lineElements = unigramLine.split("\\t");
+                unigramString = isEng ? lineElements[0].replaceAll("[^a-zA-Z]", "") : lineElements[0];
+                unigram = (caseSensitive) ? Unigram.fromString(unigramString) : Unigram.fromString(unigramString.toLowerCase());
+                if (patternsToSkip.contains(unigram.toString()) || unigram.toString().isEmpty()) {
+                    context.getCounter(CountersEnum.SKIPPED_WORDS).increment(1);
+                    return;
                 }
-                catch(Exception e){
-                    logger.info(String.format("Failed on %s with %s", value.toString(), e.getMessage()));
-                }
-
+                year = Integer.parseInt(lineElements[1]);
+                    count = new IntWritable(Integer.parseInt((lineElements[2])));
+                IntWritable decade = new IntWritable(year / 10);
+                context.write(new UnigramDecade(unigram, decade), count);
+                context.write(new UnigramDecade(Unigram.fromString("*"), decade), count); // for counting total words per decade
+            }
+            catch(Exception e){
+                logger.info(String.format("Failed on %s with %s", value.toString(), e.getMessage()));
             }
         }
     }
@@ -165,6 +164,8 @@ public class step1UnigramCount {
         job.setOutputValueClass(Text.class);
 
         job.getConfiguration().setBoolean("wordcount.skip.patterns", true);
+        if(args[PathEnum.LANG.value].equals("heb"))
+            job.getConfiguration().setBoolean("is.eng", false);
         job.addCacheFile(new Path(args[PathEnum.STOP_WORDS.value]).toUri());
 
         job.setInputFormatClass(SequenceFileInputFormat.class);

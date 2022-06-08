@@ -18,7 +18,7 @@ public class App {
         EmrClient emr = EmrClient.builder().region(REGION).build();
 
 
-        String[] pipe = new String[9];
+        String[] pipe = new String[10];
         String lang = args[0];
         String lang1 = args[0];
         if(args.length >= 2)
@@ -35,13 +35,15 @@ public class App {
             pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "heb-stopwords.txt";
             pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/1gram/data";
             pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/heb-all/2gram/data";
+            pipe[PathEnum.LANG.value-1] = "heb";
 //            pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1gram-sample.txt";
 //            pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams-sample.txt";
         }
         else {
             pipe[PathEnum.STOP_WORDS.value-1] = BUCKET_HOME_SCHEME + "eng-stopwords.txt";
-            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/1gram/data";
-            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-us-all/2gram/data";
+            pipe[PathEnum.UNIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/1gram/data";
+            pipe[PathEnum.BIGRAMS.value-1] = "s3://datasets.elasticmapreduce/ngrams/books/20090715/eng-1M/2gram/data";
+            pipe[PathEnum.LANG.value-1] = "eng";
 //            pipe[PathEnum.UNIGRAMS.value-1] = BUCKET_HOME_SCHEME + "1gram-sample.txt";
 //            pipe[PathEnum.BIGRAMS.value-1] = BUCKET_HOME_SCHEME + "2grams-sample.txt";
         }
